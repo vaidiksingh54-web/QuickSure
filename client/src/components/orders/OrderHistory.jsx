@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 
-export default function OrderHistory({ isOpen, onClose }) {
+export default function OrderHistory({ isOpen, onClose, onOpenTracker }) {
   const { orders, fetchMyOrders, fetchOrderById, loading } = useOrders();
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
@@ -95,9 +95,23 @@ export default function OrderHistory({ isOpen, onClose }) {
                   <span className="font-mono font-bold text-slate-900 text-sm">
                     {selectedOrder.order_number}
                   </span>
-                  <span className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full border ${getStatusBadge(selectedOrder.status)}`}>
-                    {selectedOrder.status}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {onOpenTracker && (
+                      <button
+                        onClick={() => {
+                          onClose();
+                          onOpenTracker(selectedOrder);
+                        }}
+                        className="text-[11px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg flex items-center gap-1 transition-colors"
+                      >
+                        <Truck className="w-3.5 h-3.5" />
+                        <span>Live Parcel Tracker</span>
+                      </button>
+                    )}
+                    <span className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-full border ${getStatusBadge(selectedOrder.status)}`}>
+                      {selectedOrder.status}
+                    </span>
+                  </div>
                 </div>
                 <div className="text-xs text-slate-500">
                   Placed on {new Date(selectedOrder.created_at).toLocaleDateString()} • Total: ₹{Number(selectedOrder.total_amount).toFixed(2)}

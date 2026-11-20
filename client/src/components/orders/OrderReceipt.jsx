@@ -11,7 +11,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 
-export default function OrderReceipt({ orderData, onClose }) {
+export default function OrderReceipt({ orderData, onClose, onOpenTracker }) {
   if (!orderData) return null;
 
   const { order, sub_orders = [], payment, quote } = orderData;
@@ -148,12 +148,26 @@ export default function OrderReceipt({ orderData, onClose }) {
           </div>
         </div>
 
-        <button
-          onClick={onClose}
-          className="mt-6 w-full py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors text-xs uppercase tracking-wider"
-        >
-          Done & Return to Store
-        </button>
+        <div className="mt-6 flex flex-col sm:flex-row gap-2">
+          {onOpenTracker && (
+            <button
+              onClick={() => {
+                onClose();
+                onOpenTracker(orderData.order || orderData);
+              }}
+              className="flex-1 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shadow-md shadow-indigo-500/20"
+            >
+              <Truck className="w-4 h-4" />
+              <span>Track Multi-Seller Shipments</span>
+            </button>
+          )}
+          <button
+            onClick={onClose}
+            className="flex-1 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors text-xs uppercase tracking-wider"
+          >
+            Done & Return to Store
+          </button>
+        </div>
       </div>
     </div>
   );
