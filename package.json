@@ -1,0 +1,28 @@
+{
+  "name": "quicksure-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "QuickSure – Multi-Category Multi-Seller E-Commerce Marketplace",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=server",
+    "dev:server": "npm run dev --workspace=server",
+    "dev:client": "npm run dev --workspace=client",
+    "build:client": "npm run build --workspace=client",
+    "start:server": "npm run start --workspace=server",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "keywords": [
+    "ecommerce",
+    "marketplace",
+    "react",
+    "express",
+    "supabase",
+    "postgresql"
+  ],
+  "author": "QuickSure Team",
+  "license": "UNLICENSED"
+}
