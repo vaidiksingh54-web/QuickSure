@@ -18,13 +18,18 @@ import {
   Tag,
   Flame,
   RefreshCw,
-  Sparkles
+  Sparkles,
+  Package,
+  Truck
 } from 'lucide-react';
 import api from './services/api';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider, useCart } from './context/CartContext';
+import { OrderProvider, useOrders } from './context/OrderContext';
 import AuthModal from './components/auth/AuthModal';
 import CartDrawer from './components/cart/CartDrawer';
+import OrderReceipt from './components/orders/OrderReceipt';
+import OrderHistory from './components/orders/OrderHistory';
 
 // Demo catalog items matching the server mock variant fixtures
 const DEMO_PRODUCTS = [
@@ -84,15 +89,21 @@ function MainContent() {
     toggleWishlist,
     quote 
   } = useCart();
+  const { orders, sellerSubOrders, fetchSellerSubOrders, updateSubOrderStatus } = useOrders();
 
   const [health, setHealth] = useState(null);
   const [loadingHealth, setLoadingHealth] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [orderHistoryOpen, setOrderHistoryOpen] = useState(false);
+  const [placedOrderData, setPlacedOrderData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
 
   // Concurrency Stress Tester state
   const [raceLoading, setRaceLoading] = useState(false);
   const [raceResult, setRaceResult] = useState(null);
+
+  // Seller fulfillment test state
+  const [updatingSubOrder, setUpdatingSubOrder] = useState(false);
 
   useEffect(() => {
     checkHealth();
@@ -205,7 +216,7 @@ function MainContent() {
             </span>
           </div>
           <div className="text-slate-400 font-medium hidden md:block">
-            Stage 4: Shopping Cart, Authoritative Pricing & Concurrency Live
+            Stage 5: Multi-Seller Order Splitting & Simulation Services Live
           </div>
         </div>
       </div>
@@ -225,7 +236,7 @@ function MainContent() {
             {/* Wishlist Indicator */}
             <div className="relative">
               <button 
-                onClick={() => !isAuthenticated && setAuthModalOpen(true)}
+                onClick={() => !isAuthenticated ? setAuthModalOpen(true) : null}
                 title="Wishlist"
                 className="p-2 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-slate-100 transition-colors relative"
               >
@@ -237,6 +248,17 @@ function MainContent() {
                 )}
               </button>
             </div>
+
+            {/* Orders Tracker Button */}
+            {isAuthenticated && (
+              <button
+                onClick={() => setOrderHistoryOpen(true)}
+                className="p-2 rounded-xl text-slate-600 hover:text-blue-600 hover:bg-slate-100 transition-colors relative"
+                title="Your Orders"
+              >
+                <Package className="w-5 h-5" />
+              </button>
+            )}
 
             {/* Cart Trigger Button */}
             <button
@@ -512,7 +534,24 @@ function MainContent() {
       </footer>
 
       {/* Slide-over Cart Drawer */}
-      <CartDrawer />
+      <CartDrawer 
+        onOrderPlaced={(data) => setPlacedOrderData(data)} 
+        onRequireAuth={() => setAuthModalOpen(true)}
+      />
+
+      {/* Order Confirmation Receipt Modal */}
+      {placedOrderData && (
+        <OrderReceipt 
+          orderData={placedOrderData} 
+          onClose={() => setPlacedOrderData(null)} 
+        />
+      )}
+
+      {/* Customer Order History Modal */}
+      <OrderHistory 
+        isOpen={orderHistoryOpen} 
+        onClose={() => setOrderHistoryOpen(false)} 
+      />
 
       {/* Auth Modal */}
       <AuthModal isOpen={authModalOpen} onClose={() => setAuthModalOpen(false)} />
@@ -524,7 +563,9 @@ export default function App() {
   return (
     <AuthProvider>
       <CartProvider>
-        <MainContent />
+        <OrderProvider>
+          <MainContent />
+        </OrderProvider>
       </CartProvider>
     </AuthProvider>
   );

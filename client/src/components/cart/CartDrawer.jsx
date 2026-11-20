@@ -14,8 +14,9 @@ import {
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import { useOrders } from '../../context/OrderContext';
 
-export default function CartDrawer() {
+export default function CartDrawer({ onOrderPlaced, onRequireAuth }) {
   const { 
     items, 
     loading, 
@@ -32,10 +33,41 @@ export default function CartDrawer() {
     totalItemCount 
   } = useCart();
   const { isAuthenticated } = useAuth();
+  const { checkout, loading: checkoutLoading } = useOrders();
   const [inputCoupon, setInputCoupon] = useState('');
   const [actionError, setActionError] = useState(null);
 
   if (!isCartOpen) return null;
+
+  const handleCheckout = async () => {
+    if (!isAuthenticated) {
+      setIsCartOpen(false);
+      if (onRequireAuth) onRequireAuth();
+      return;
+    }
+
+    try {
+      setActionError(null);
+      const orderResult = await checkout({
+        payment_method: 'card_sim',
+        shipping_address: {
+          recipient_name: 'Aarav Sharma',
+          phone: '9876543210',
+          street_address: '42 MG Road, Sector 15',
+          apartment: 'Tower B, Flat 304',
+          city: 'Gurugram',
+          state: 'Haryana',
+          postal_code: '122001',
+          country: 'India',
+        },
+        coupon_code: couponCode || null,
+      });
+      setIsCartOpen(false);
+      if (onOrderPlaced) onOrderPlaced(orderResult);
+    } catch (err) {
+      setActionError(err.message || 'Checkout failed');
+    }
+  };
 
   const handleApplyCoupon = async (e) => {
     e.preventDefault();
@@ -336,10 +368,11 @@ export default function CartDrawer() {
 
               {/* Checkout Action Button */}
               <button
-                disabled={loading || items.length === 0}
+                onClick={handleCheckout}
+                disabled={loading || checkoutLoading || items.length === 0}
                 className="w-full py-3 px-4 rounded-xl bg-blue-600 text-white font-bold text-xs uppercase tracking-wider hover:bg-blue-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                <span>Proceed to Secure Checkout</span>
+                <span>{checkoutLoading ? 'Processing Payment Simulation...' : 'Proceed to Secure Checkout'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
