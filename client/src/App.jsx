@@ -31,6 +31,7 @@ import CartDrawer from './components/cart/CartDrawer';
 import OrderReceipt from './components/orders/OrderReceipt';
 import OrderHistory from './components/orders/OrderHistory';
 import AdminDashboard from './components/admin/AdminDashboard';
+import SellerDashboard from './components/seller/SellerDashboard';
 
 // Demo catalog items matching the server mock variant fixtures
 const DEMO_PRODUCTS = [
@@ -99,6 +100,7 @@ function MainContent() {
   const [placedOrderData, setPlacedOrderData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
   const [adminView, setAdminView] = useState('storefront');
+  const [sellerView, setSellerView] = useState('storefront');
 
   // Concurrency Stress Tester state
   const [raceLoading, setRaceLoading] = useState(false);
@@ -277,6 +279,21 @@ function MainContent() {
               </button>
             )}
 
+            {/* Seller Portal Toggle Button */}
+            {role === 'seller' && (
+              <button
+                onClick={() => setSellerView(sellerView === 'portal' ? 'storefront' : 'portal')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
+                  sellerView === 'portal'
+                    ? 'bg-amber-500 text-slate-900 border-amber-600 shadow-sm font-extrabold'
+                    : 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100'
+                }`}
+              >
+                <Store className="w-4 h-4" />
+                <span>{sellerView === 'portal' ? 'Storefront' : 'Seller Hub'}</span>
+              </button>
+            )}
+
             {/* Cart Trigger Button */}
             <button
               onClick={() => setIsCartOpen(true)}
@@ -330,6 +347,8 @@ function MainContent() {
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         {role === 'admin' && adminView === 'portal' ? (
           <AdminDashboard />
+        ) : role === 'seller' && sellerView === 'portal' ? (
+          <SellerDashboard />
         ) : (
           <>
         {/* Stage 4 Hero Banner */}
