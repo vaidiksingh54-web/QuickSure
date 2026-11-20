@@ -30,6 +30,7 @@ import AuthModal from './components/auth/AuthModal';
 import CartDrawer from './components/cart/CartDrawer';
 import OrderReceipt from './components/orders/OrderReceipt';
 import OrderHistory from './components/orders/OrderHistory';
+import AdminDashboard from './components/admin/AdminDashboard';
 
 // Demo catalog items matching the server mock variant fixtures
 const DEMO_PRODUCTS = [
@@ -97,6 +98,7 @@ function MainContent() {
   const [orderHistoryOpen, setOrderHistoryOpen] = useState(false);
   const [placedOrderData, setPlacedOrderData] = useState(null);
   const [toastMessage, setToastMessage] = useState(null);
+  const [adminView, setAdminView] = useState('storefront');
 
   // Concurrency Stress Tester state
   const [raceLoading, setRaceLoading] = useState(false);
@@ -260,6 +262,21 @@ function MainContent() {
               </button>
             )}
 
+            {/* Admin Portal Toggle Button */}
+            {role === 'admin' && (
+              <button
+                onClick={() => setAdminView(adminView === 'portal' ? 'storefront' : 'portal')}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
+                  adminView === 'portal'
+                    ? 'bg-indigo-600 text-white border-indigo-700 shadow-sm'
+                    : 'bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100'
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>{adminView === 'portal' ? 'Storefront' : 'Admin Portal'}</span>
+              </button>
+            )}
+
             {/* Cart Trigger Button */}
             <button
               onClick={() => setIsCartOpen(true)}
@@ -311,7 +328,10 @@ function MainContent() {
 
       {/* Main Page Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-
+        {role === 'admin' && adminView === 'portal' ? (
+          <AdminDashboard />
+        ) : (
+          <>
         {/* Stage 4 Hero Banner */}
         <div className="bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 rounded-3xl p-8 sm:p-10 text-white shadow-xl relative overflow-hidden border border-slate-800">
           <div className="relative z-10 max-w-3xl">
@@ -520,6 +540,8 @@ function MainContent() {
             </div>
           </div>
         </div>
+        </>
+      )}
       </main>
 
       {/* Footer */}
