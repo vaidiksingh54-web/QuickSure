@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "test": "node test/health.test.js && node test/auth.test.js && node test/catalog.test.js && node test/cart-pricing.test.js && node test/orders.test.js",
+    "test": "node test/health.test.js && node test/auth.test.js && node test/catalog.test.js && node test/cart-pricing.test.js && node test/orders.test.js && node test/admin.test.js",
     "test:health": "node test/health.test.js",
     "test:auth": "node test/auth.test.js",
     "test:catalog": "node test/catalog.test.js",
