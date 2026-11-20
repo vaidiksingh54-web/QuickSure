@@ -118,6 +118,6 @@ QuickSure/
 | **Stage 5** | Multi-Seller Order Splitting & Simulation | ✅ **COMPLETE** (Parent Orders, Sub-Order Partitioning, Commission Splitting, Deterministic Payment Simulator, 15/15 Tests Passed, OrderReceipt, OrderHistory) |
 | **Stage 6** | Admin Management Portal | ✅ **COMPLETE** (Platform Analytics & GMV, Seller Approvals Queue, Commission Overrides, Taxonomy Manager, 12/12 Tests Passed, AdminDashboard UI) |
 | **Stage 7** | Seller Management Portal | ✅ **COMPLETE** (Store Onboarding & Profile, Product Catalog, Inventory Stock Editor, Fulfillment Dispatch, 12/12 Tests Passed, SellerDashboard UI) |
-| **Stage 8** | Customer Storefront & Catalog UI | ⏳ Next Priority |
-| **Stage 9** | Accordion Checkout & Tracking UI | ⏳ Queued |
+| **Stage 8** | Customer Storefront & Catalog UI | ✅ **COMPLETE** (CategoryBar, HeroBanner, Faceted ProductFilterSidebar, Responsive ProductCard Grid/List, PDP Modal with Dynamic Stock & Live Variant Selector, Footer, Zero-CLS Pagination) |
+| **Stage 9** | Accordion Checkout & Tracking UI | ⏳ Next Priority |
 | **Stage 10** | Hardening, Testing & Deployment | ⏳ Queued |
