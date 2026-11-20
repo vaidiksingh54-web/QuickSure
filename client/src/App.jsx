@@ -48,6 +48,11 @@ import ProductCard from './components/catalog/ProductCard';
 import ProductDetailModal from './components/catalog/ProductDetailModal';
 import Footer from './components/catalog/Footer';
 
+// Stage 9 Checkout & Tracking UI Components
+import AccordionCheckoutModal from './components/checkout/AccordionCheckoutModal';
+import OrderTrackerModal from './components/orders/OrderTrackerModal';
+import CustomerAccountModal from './components/account/CustomerAccountModal';
+
 function MainContent() {
   const { user, role, isAuthenticated, logout, loginAsDemoPersona } = useAuth();
   const {
@@ -64,6 +69,9 @@ function MainContent() {
   const [activeView, setActiveView] = useState('storefront'); // 'storefront' | 'admin' | 'seller'
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [orderHistoryOpen, setOrderHistoryOpen] = useState(false);
+  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
+  const [trackerOrder, setTrackerOrder] = useState(null);
+  const [accountModalOpen, setAccountModalOpen] = useState(false);
   const [placedOrderData, setPlacedOrderData] = useState(null);
   const [selectedProductSlug, setSelectedProductSlug] = useState(null);
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
@@ -232,7 +240,8 @@ function MainContent() {
         activeView={activeView}
         setActiveView={setActiveView}
         onOpenAuth={() => setAuthModalOpen(true)}
-        onOpenOrders={() => setOrderHistoryOpen(true)}
+        onOpenOrders={() => setAccountModalOpen(true)}
+        onOpenAccount={() => setAccountModalOpen(true)}
       />
 
       {/* Category Navigation Bar (Storefront view only) */}
@@ -558,19 +567,58 @@ function MainContent() {
       )}
 
       {/* Cart Drawer */}
-      <CartDrawer onCheckoutSuccess={(order) => setPlacedOrderData(order)} />
+      <CartDrawer
+        onOrderPlaced={(order) => setPlacedOrderData(order)}
+        onOpenAccordionCheckout={() => setCheckoutModalOpen(true)}
+      />
+
+      {/* Accordion Single-Page Checkout Modal */}
+      <AccordionCheckoutModal
+        isOpen={checkoutModalOpen}
+        onClose={() => setCheckoutModalOpen(false)}
+        onOrderSuccess={(orderResult) => {
+          setPlacedOrderData(orderResult);
+          showToast('Order placed successfully with atomic sub-order partitioning!');
+        }}
+      />
 
       {/* Order Confirmation Receipt Modal */}
       {placedOrderData && (
         <OrderReceipt
-          order={placedOrderData}
+          orderData={placedOrderData}
           onClose={() => setPlacedOrderData(null)}
+          onOpenTracker={(order) => setTrackerOrder(order)}
         />
       )}
 
+      {/* Live Sub-Order Parcel Shipment Tracker */}
+      {trackerOrder && (
+        <OrderTrackerModal
+          order={trackerOrder}
+          onClose={() => setTrackerOrder(null)}
+        />
+      )}
+
+      {/* Customer Account & Tax Invoices Portal */}
+      <CustomerAccountModal
+        isOpen={accountModalOpen}
+        onClose={() => setAccountModalOpen(false)}
+        onOpenTracker={(order) => {
+          setAccountModalOpen(false);
+          setTrackerOrder(order);
+        }}
+      />
+
       {/* Customer Order History Modal */}
       {orderHistoryOpen && (
-        <OrderHistory onClose={() => setOrderHistoryOpen(false)} />
+        <OrderHistory
+          isOpen={orderHistoryOpen}
+          onClose={() => setOrderHistoryOpen(false)}
+          onOpenTracker={(order) => {
+            setOrderHistoryOpen(false);
+            setTrackerOrder(order);
+          }}
+        />
       )}
 
       {/* Auth Modal */}
