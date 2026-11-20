@@ -354,4 +354,16 @@ export const cartController = {
       data: quote,
     });
   },
+
+  // Internal helpers for orderController to access mock cart state
+  _getMockCartItems: (userId) => {
+    const userCart = mockCarts[userId];
+    return userCart?.items || [];
+  },
+
+  _clearMockCart: (userId) => {
+    if (mockCarts[userId]) {
+      mockCarts[userId].items = [];
+    }
+  },
 };
