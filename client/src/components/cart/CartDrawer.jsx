@@ -16,7 +16,7 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { useOrders } from '../../context/OrderContext';
 
-export default function CartDrawer({ onOrderPlaced, onRequireAuth }) {
+export default function CartDrawer({ onOrderPlaced, onRequireAuth, onOpenAccordionCheckout }) {
   const { 
     items, 
     loading, 
@@ -43,6 +43,12 @@ export default function CartDrawer({ onOrderPlaced, onRequireAuth }) {
     if (!isAuthenticated) {
       setIsCartOpen(false);
       if (onRequireAuth) onRequireAuth();
+      return;
+    }
+
+    if (onOpenAccordionCheckout) {
+      setIsCartOpen(false);
+      onOpenAccordionCheckout();
       return;
     }
 
