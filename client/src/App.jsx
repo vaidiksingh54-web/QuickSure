@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ShieldCheck, 
-  Zap, 
-  Server, 
-  Database, 
-  CheckCircle2, 
-  AlertCircle, 
+import {
+  ShieldCheck,
+  Zap,
+  Server,
+  Database,
+  CheckCircle2,
+  AlertCircle,
   Layers,
   User,
   LogOut,
@@ -81,13 +81,13 @@ const DEMO_PRODUCTS = [
 
 function MainContent() {
   const { user, role, isAuthenticated, logout, loginAsDemoPersona } = useAuth();
-  const { 
-    totalItemCount, 
-    setIsCartOpen, 
-    addToCart, 
-    wishlist, 
+  const {
+    totalItemCount,
+    setIsCartOpen,
+    addToCart,
+    wishlist,
     toggleWishlist,
-    quote 
+    quote
   } = useCart();
   const { orders, sellerSubOrders, fetchSellerSubOrders, updateSubOrderStatus } = useOrders();
 
@@ -224,7 +224,7 @@ function MainContent() {
       {/* Main Header / Navigation */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
-          
+
           {/* Logo */}
           <div className="flex items-center gap-3">
             <img src="/logo.svg" alt="QuickSure Logo" className="h-12 w-auto" />
@@ -232,10 +232,10 @@ function MainContent() {
 
           {/* Action Center: Cart, Wishlist, Auth */}
           <div className="flex items-center gap-3 sm:gap-4">
-            
+
             {/* Wishlist Indicator */}
             <div className="relative">
-              <button 
+              <button
                 onClick={() => !isAuthenticated ? setAuthModalOpen(true) : null}
                 title="Wishlist"
                 className="p-2 rounded-xl text-slate-600 hover:text-rose-600 hover:bg-slate-100 transition-colors relative"
@@ -311,7 +311,7 @@ function MainContent() {
 
       {/* Main Page Body */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-        
+
         {/* Stage 4 Hero Banner */}
         <div className="bg-gradient-to-r from-slate-950 via-blue-950 to-slate-900 rounded-3xl p-8 sm:p-10 text-white shadow-xl relative overflow-hidden border border-slate-800">
           <div className="relative z-10 max-w-3xl">
@@ -333,31 +333,28 @@ function MainContent() {
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => loginAsDemoPersona('customer')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                    role === 'customer'
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${role === 'customer'
                       ? 'bg-blue-600 text-white ring-2 ring-white shadow'
                       : 'bg-white/15 hover:bg-white/25 text-slate-200'
-                  }`}
+                    }`}
                 >
                   <User className="w-3.5 h-3.5" /> Customer Mode
                 </button>
                 <button
                   onClick={() => loginAsDemoPersona('seller')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                    role === 'seller'
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${role === 'seller'
                       ? 'bg-amber-500 text-slate-900 ring-2 ring-white shadow font-extrabold'
                       : 'bg-white/15 hover:bg-white/25 text-slate-200'
-                  }`}
+                    }`}
                 >
                   <Store className="w-3.5 h-3.5" /> Seller Mode
                 </button>
                 <button
                   onClick={() => loginAsDemoPersona('admin')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
-                    role === 'admin'
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${role === 'admin'
                       ? 'bg-indigo-600 text-white ring-2 ring-white shadow'
                       : 'bg-white/15 hover:bg-white/25 text-slate-200'
-                  }`}
+                    }`}
                 >
                   <ShieldCheck className="w-3.5 h-3.5" /> Admin Mode
                 </button>
@@ -395,8 +392,8 @@ function MainContent() {
             {DEMO_PRODUCTS.map((prod) => {
               const isWishlisted = wishlist.includes(prod.id);
               return (
-                <div 
-                  key={prod.id} 
+                <div
+                  key={prod.id}
                   className="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between"
                 >
                   <div>
@@ -407,11 +404,10 @@ function MainContent() {
                       </span>
                       <button
                         onClick={() => handleToggleWishlist(prod.id)}
-                        className={`p-1.5 rounded-lg transition-colors ${
-                          isWishlisted 
-                            ? 'text-rose-500 bg-rose-50' 
+                        className={`p-1.5 rounded-lg transition-colors ${isWishlisted
+                            ? 'text-rose-500 bg-rose-50'
                             : 'text-slate-400 hover:text-rose-500 hover:bg-slate-50'
-                        }`}
+                          }`}
                         title="Toggle Wishlist"
                       >
                         <Heart className="w-4 h-4 fill-current" />
@@ -534,23 +530,23 @@ function MainContent() {
       </footer>
 
       {/* Slide-over Cart Drawer */}
-      <CartDrawer 
-        onOrderPlaced={(data) => setPlacedOrderData(data)} 
+      <CartDrawer
+        onOrderPlaced={(data) => setPlacedOrderData(data)}
         onRequireAuth={() => setAuthModalOpen(true)}
       />
 
       {/* Order Confirmation Receipt Modal */}
       {placedOrderData && (
-        <OrderReceipt 
-          orderData={placedOrderData} 
-          onClose={() => setPlacedOrderData(null)} 
+        <OrderReceipt
+          orderData={placedOrderData}
+          onClose={() => setPlacedOrderData(null)}
         />
       )}
 
       {/* Customer Order History Modal */}
-      <OrderHistory 
-        isOpen={orderHistoryOpen} 
-        onClose={() => setOrderHistoryOpen(false)} 
+      <OrderHistory
+        isOpen={orderHistoryOpen}
+        onClose={() => setOrderHistoryOpen(false)}
       />
 
       {/* Auth Modal */}
