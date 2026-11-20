@@ -24,6 +24,7 @@ export default function Navbar({
   setActiveView,
   onOpenAuth,
   onOpenOrders,
+  onOpenAccount,
 }) {
   const { user, role, isAuthenticated, logout, loginAsDemoPersona } = useAuth();
   const { totalItemCount, setIsCartOpen, wishlist } = useCart();
@@ -183,6 +184,14 @@ export default function Navbar({
             {/* Auth Dropdown / Button */}
             {isAuthenticated ? (
               <div className="flex items-center space-x-1">
+                <button
+                  onClick={onOpenAccount}
+                  className="p-2 text-indigo-600 hover:text-indigo-800 hover:bg-indigo-50 rounded-lg transition-colors"
+                  title="My Account & Tax Invoices"
+                  aria-label="My Account"
+                >
+                  <User className="w-5 h-5" />
+                </button>
                 <button
                   onClick={logout}
                   className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
