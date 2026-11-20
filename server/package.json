@@ -7,10 +7,11 @@
   "scripts": {
     "dev": "node --watch server.js",
     "start": "node server.js",
-    "test": "node test/health.test.js && node test/auth.test.js && node test/catalog.test.js",
+    "test": "node test/health.test.js && node test/auth.test.js && node test/catalog.test.js && node test/cart-pricing.test.js",
     "test:health": "node test/health.test.js",
     "test:auth": "node test/auth.test.js",
-    "test:catalog": "node test/catalog.test.js"
+    "test:catalog": "node test/catalog.test.js",
+    "test:cart": "node test/cart-pricing.test.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
