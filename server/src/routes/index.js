@@ -7,6 +7,7 @@ import uploadRoutes from './uploadRoutes.js';
 import cartRoutes from './cartRoutes.js';
 import wishlistRoutes from './wishlistRoutes.js';
 import orderRoutes from './orderRoutes.js';
+import adminRoutes from './adminRoutes.js';
 
 const apiRouter = Router();
 
@@ -18,5 +19,6 @@ apiRouter.use('/upload', uploadRoutes);
 apiRouter.use('/cart', cartRoutes);
 apiRouter.use('/wishlist', wishlistRoutes);
 apiRouter.use('/orders', orderRoutes);
+apiRouter.use('/admin', adminRoutes);
 
 export default apiRouter;
