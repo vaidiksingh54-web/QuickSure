@@ -116,8 +116,8 @@ QuickSure/
 | **Stage 3** | Backend Catalog & Storage CDN | ✅ **COMPLETE** (Category Tree, Product & Variant Engine, Storage CDN, 14/14 Tests Passed) |
 | **Stage 4** | Cart, Pricing & Atomic Concurrency | ✅ **COMPLETE** (Authoritative Server Pricing Quote, Coupon Engine, Atomic Floor Reservation, 13/12 Tests Passed, CartContext, CartDrawer UI) |
 | **Stage 5** | Multi-Seller Order Splitting & Simulation | ✅ **COMPLETE** (Parent Orders, Sub-Order Partitioning, Commission Splitting, Deterministic Payment Simulator, 15/15 Tests Passed, OrderReceipt, OrderHistory) |
-| **Stage 6** | Admin Management Portal | ⏳ Next Priority |
-| **Stage 7** | Seller Management Portal | ⏳ Queued |
+| **Stage 6** | Admin Management Portal | ✅ **COMPLETE** (Platform Analytics & GMV, Seller Approvals Queue, Commission Overrides, Taxonomy Manager, 12/12 Tests Passed, AdminDashboard UI) |
+| **Stage 7** | Seller Management Portal | ⏳ Next Priority |
 | **Stage 8** | Customer Storefront & Catalog UI | ⏳ Queued |
 | **Stage 9** | Accordion Checkout & Tracking UI | ⏳ Queued |
 | **Stage 10** | Hardening, Testing & Deployment | ⏳ Queued |
