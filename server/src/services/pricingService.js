@@ -4,6 +4,7 @@ import { inventoryService } from './inventoryService.js'
 import { ValidationError, NotFoundError } from '../utils/errors.js'
 
 // In-memory demo coupons for test environment
+// Add new coupons here — they auto-resolve without DB in mock mode
 const mockCoupons = {
   QUICK10: {
     code: 'QUICK10',
