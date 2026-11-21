@@ -3,6 +3,12 @@
  * Enforces structured, predictable errors across all Express controllers and services.
  */
 
+export class RateLimitError extends AppError {
+  constructor (message = 'Too many requests, please slow down', code = 'RATE_LIMITED') {
+    super(message, 429, code)
+  }
+}
+
 export class AppError extends Error {
   constructor (message, statusCode = 500, code = 'INTERNAL_ERROR', details = null) {
     super(message)
