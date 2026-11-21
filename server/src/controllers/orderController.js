@@ -1,12 +1,12 @@
-import { ApiResponse } from '../utils/apiResponse.js';
-import { env } from '../config/env.js';
-import { orderService } from '../services/orderService.js';
+import { ApiResponse } from '../utils/apiResponse.js'
+import { env } from '../config/env.js'
+import { orderService } from '../services/orderService.js'
 import {
   checkoutSchema,
   updateSubOrderStatusSchema,
   orderIdParamSchema,
-  paginationSchema,
-} from '../validators/orderValidator.js';
+  paginationSchema
+} from '../validators/orderValidator.js'
 
 export const orderController = {
   /**
@@ -14,59 +14,70 @@ export const orderController = {
    * Place an order from the customer's active cart
    */
   checkout: async (req, res) => {
-    const userId = req.user.id;
-    const payload = checkoutSchema.parse(req.body);
+    const userId = req.user.id
+    const payload = checkoutSchema.parse(req.body)
+
+    // Fast check for idempotent retry before checking cart
+    if (payload.idempotency_key) {
+      const existing = await orderService.findExistingOrderByIdempotency(userId, payload.idempotency_key)
+      if (existing) {
+        return ApiResponse.success(res, {
+          message: 'Order retrieved via idempotency key',
+          data: existing
+        })
+      }
+    }
 
     // Get cart items by making an internal fetch to the cart data layer
-    let cartItems = [];
+    let cartItems = []
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
       // Import the cartController's internal getter to read its mock state
-      const { cartController } = await import('./cartController.js');
-      const rawItems = cartController._getMockCartItems(userId);
+      const { cartController } = await import('./cartController.js')
+      const rawItems = cartController._getMockCartItems(userId)
       if (!rawItems || rawItems.length === 0) {
         return ApiResponse.error(res, {
           message: 'Your cart is empty. Add items before checkout.',
           code: 'EMPTY_CART',
-          statusCode: 422,
-        });
+          statusCode: 422
+        })
       }
       cartItems = rawItems.map((i) => ({
         variant_id: i.variant_id,
-        quantity: i.quantity,
-      }));
+        quantity: i.quantity
+      }))
     } else {
-      const { supabaseAdmin } = await import('../config/supabase.js');
+      const { supabaseAdmin } = await import('../config/supabase.js')
       const { data: cart } = await supabaseAdmin
         .from('carts')
         .select('id, cart_items(variant_id, quantity)')
         .eq('user_id', userId)
         .eq('status', 'active')
-        .single();
+        .single()
 
       if (!cart || !cart.cart_items || cart.cart_items.length === 0) {
         return ApiResponse.error(res, {
           message: 'Your cart is empty. Add items before checkout.',
           code: 'EMPTY_CART',
-          statusCode: 422,
-        });
+          statusCode: 422
+        })
       }
-      cartItems = cart.cart_items;
+      cartItems = cart.cart_items
     }
 
     // Orchestrate checkout
-    const result = await orderService.placeOrder(userId, payload, cartItems);
+    const result = await orderService.placeOrder(userId, payload, cartItems)
 
     // Clear cart after successful order
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const { cartController } = await import('./cartController.js');
-      cartController._clearMockCart(userId);
+      const { cartController } = await import('./cartController.js')
+      cartController._clearMockCart(userId)
     }
 
     return ApiResponse.success(res, {
       message: `Order ${result.order.order_number} placed successfully!`,
       data: result,
-      statusCode: 201,
-    });
+      statusCode: 201
+    })
   },
 
   /**
@@ -74,18 +85,18 @@ export const orderController = {
    * Paginated order history for the authenticated customer
    */
   getMyOrders: async (req, res) => {
-    const userId = req.user.id;
-    const { page, limit } = paginationSchema.parse(req.query);
+    const userId = req.user.id
+    const { page, limit } = paginationSchema.parse(req.query)
 
-    const result = await orderService.getOrdersForUser(userId, page, limit);
+    const result = await orderService.getOrdersForUser(userId, page, limit)
 
     return ApiResponse.paginated(res, {
       data: result.orders,
       total: result.total,
       page: result.page,
       limit: result.limit,
-      message: 'Order history retrieved successfully',
-    });
+      message: 'Order history retrieved successfully'
+    })
   },
 
   /**
@@ -93,16 +104,16 @@ export const orderController = {
    * Get single order detail with sub-orders, items, and payment info
    */
   getOrderById: async (req, res) => {
-    const { id } = orderIdParamSchema.parse(req.params);
-    const userId = req.user.id;
-    const role = req.user.role;
+    const { id } = orderIdParamSchema.parse(req.params)
+    const userId = req.user.id
+    const role = req.user.role
 
-    const order = await orderService.getOrderById(id, userId, role);
+    const order = await orderService.getOrderById(id, userId, role)
 
     return ApiResponse.success(res, {
       message: 'Order details retrieved successfully',
-      data: order,
-    });
+      data: order
+    })
   },
 
   /**
@@ -110,18 +121,18 @@ export const orderController = {
    * List sub-orders for the authenticated seller's fulfillment dashboard
    */
   getSellerSubOrders: async (req, res) => {
-    const sellerUserId = req.user.id;
-    const { page, limit } = paginationSchema.parse(req.query);
+    const sellerUserId = req.user.id
+    const { page, limit } = paginationSchema.parse(req.query)
 
-    const result = await orderService.getSubOrdersForSeller(sellerUserId, page, limit);
+    const result = await orderService.getSubOrdersForSeller(sellerUserId, page, limit)
 
     return ApiResponse.paginated(res, {
       data: result.sub_orders,
       total: result.total,
       page: result.page,
       limit: result.limit,
-      message: 'Seller fulfillment sub-orders retrieved successfully',
-    });
+      message: 'Seller fulfillment sub-orders retrieved successfully'
+    })
   },
 
   /**
@@ -129,10 +140,10 @@ export const orderController = {
    * Update sub-order status (seller or admin — state machine enforced)
    */
   updateSubOrderStatus: async (req, res) => {
-    const { id } = orderIdParamSchema.parse(req.params);
-    const payload = updateSubOrderStatusSchema.parse(req.body);
-    const userId = req.user.id;
-    const role = req.user.role;
+    const { id } = orderIdParamSchema.parse(req.params)
+    const payload = updateSubOrderStatusSchema.parse(req.body)
+    const userId = req.user.id
+    const role = req.user.role
 
     const result = await orderService.updateSubOrderStatus(
       id,
@@ -142,14 +153,14 @@ export const orderController = {
       {
         courier_name: payload.courier_name,
         tracking_number: payload.tracking_number,
-        notes: payload.notes,
+        notes: payload.notes
       }
-    );
+    )
 
     return ApiResponse.success(res, {
       message: `Sub-order status updated: ${result.transition.from} → ${result.transition.to}`,
-      data: result,
-    });
+      data: result
+    })
   },
 
   /**
@@ -157,16 +168,16 @@ export const orderController = {
    * Admin-only: list all orders across all users
    */
   getAllOrders: async (req, res) => {
-    const { page, limit } = paginationSchema.parse(req.query);
+    const { page, limit } = paginationSchema.parse(req.query)
 
-    const result = await orderService.getAllOrders(page, limit);
+    const result = await orderService.getAllOrders(page, limit)
 
     return ApiResponse.paginated(res, {
       data: result.orders,
       total: result.total,
       page: result.page,
       limit: result.limit,
-      message: 'All orders retrieved successfully',
-    });
-  },
-};
+      message: 'All orders retrieved successfully'
+    })
+  }
+}
