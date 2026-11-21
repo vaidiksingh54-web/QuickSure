@@ -1,38 +1,38 @@
-import { Router } from 'express';
-import { ApiResponse } from '../utils/apiResponse.js';
-import { supabaseAdmin } from '../config/supabase.js';
-import { env } from '../config/env.js';
+import { Router } from 'express'
+import { ApiResponse } from '../utils/apiResponse.js'
+import { supabaseAdmin } from '../config/supabase.js'
+import { env } from '../config/env.js'
 
-const router = Router();
+const router = Router()
 
 router.get('/', async (req, res) => {
-  const startTime = Date.now();
-  let dbStatus = 'healthy';
-  let dbLatencyMs = 0;
+  const startTime = Date.now()
+  let dbStatus = 'healthy'
+  let dbLatencyMs = 0
 
   // If using placeholder in local development, avoid hanging DNS requests
   if (env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-    dbStatus = 'placeholder_configured';
-    dbLatencyMs = Date.now() - startTime;
+    dbStatus = 'placeholder_configured'
+    dbLatencyMs = Date.now() - startTime
   } else {
     try {
       // Race Supabase call against a 2000ms timeout
-      const timeoutPromise = new Promise((_, reject) =>
+      const timeoutPromise = new Promise((_resolve, reject) =>
         setTimeout(() => reject(new Error('DATABASE_TIMEOUT')), 2000)
-      );
+      )
 
-      const dbCheckPromise = supabaseAdmin.from('profiles').select('id').limit(1);
+      const dbCheckPromise = supabaseAdmin.from('profiles').select('id').limit(1)
 
-      const result = await Promise.race([dbCheckPromise, timeoutPromise]);
-      dbLatencyMs = Date.now() - startTime;
+      const result = await Promise.race([dbCheckPromise, timeoutPromise])
+      dbLatencyMs = Date.now() - startTime
 
       if (result?.error) {
         // Table might not exist yet before migration
-        dbStatus = result.error.message.includes('relation') ? 'pending_migration' : 'error';
+        dbStatus = result.error.message.includes('relation') ? 'pending_migration' : 'error'
       }
     } catch (err) {
-      dbLatencyMs = Date.now() - startTime;
-      dbStatus = err.message === 'DATABASE_TIMEOUT' ? 'timeout' : 'unreachable';
+      dbLatencyMs = Date.now() - startTime
+      dbStatus = err.message === 'DATABASE_TIMEOUT' ? 'timeout' : 'unreachable'
     }
   }
 
@@ -45,10 +45,10 @@ router.get('/', async (req, res) => {
       timestamp: new Date().toISOString(),
       database: {
         status: dbStatus,
-        latencyMs: dbLatencyMs,
-      },
-    },
-  });
-});
+        latencyMs: dbLatencyMs
+      }
+    }
+  })
+})
 
-export default router;
+export default router

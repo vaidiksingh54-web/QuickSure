@@ -1,5 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-import { env } from './env.js';
+import { createClient } from '@supabase/supabase-js'
+import { env } from './env.js'
 
 /**
  * Privileged Supabase client with service-role permissions.
@@ -9,9 +9,9 @@ import { env } from './env.js';
 export const supabaseAdmin = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE_ROLE_KEY, {
   auth: {
     autoRefreshToken: false,
-    persistSession: false,
-  },
-});
+    persistSession: false
+  }
+})
 
 /**
  * Standard anonymous Supabase client (respects RLS policies).
@@ -19,6 +19,6 @@ export const supabaseAdmin = createClient(env.SUPABASE_URL, env.SUPABASE_SERVICE
 export const supabaseAnon = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY, {
   auth: {
     autoRefreshToken: false,
-    persistSession: false,
-  },
-});
+    persistSession: false
+  }
+})

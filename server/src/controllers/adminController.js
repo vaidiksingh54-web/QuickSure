@@ -1,12 +1,12 @@
-import { ApiResponse } from '../utils/apiResponse.js';
-import { adminService } from '../services/adminService.js';
+import { ApiResponse } from '../utils/apiResponse.js'
+import { adminService } from '../services/adminService.js'
 import {
   updateSellerStatusSchema,
   updateCommissionSchema,
   adminCategorySchema,
-  sellerIdParamSchema,
-} from '../validators/adminValidator.js';
-import { paginationSchema } from '../validators/orderValidator.js';
+  sellerIdParamSchema
+} from '../validators/adminValidator.js'
+import { paginationSchema } from '../validators/orderValidator.js'
 
 export const adminController = {
   /**
@@ -14,11 +14,11 @@ export const adminController = {
    * Aggregated platform-wide financial & order statistics
    */
   getStats: async (req, res) => {
-    const stats = await adminService.getPlatformStats();
+    const stats = await adminService.getPlatformStats()
     return ApiResponse.success(res, {
       message: 'Platform statistics retrieved successfully',
-      data: stats,
-    });
+      data: stats
+    })
   },
 
   /**
@@ -26,18 +26,18 @@ export const adminController = {
    * Paginated sellers list with optional status filter
    */
   getSellers: async (req, res) => {
-    const { page, limit } = paginationSchema.parse(req.query);
-    const status = req.query.status || null;
+    const { page, limit } = paginationSchema.parse(req.query)
+    const status = req.query.status || null
 
-    const result = await adminService.getSellers({ status, page, limit });
+    const result = await adminService.getSellers({ status, page, limit })
 
     return ApiResponse.paginated(res, {
       data: result.sellers,
       total: result.total,
       page: result.page,
       limit: result.limit,
-      message: 'Sellers list retrieved successfully',
-    });
+      message: 'Sellers list retrieved successfully'
+    })
   },
 
   /**
@@ -45,15 +45,15 @@ export const adminController = {
    * Approve, reject, or suspend a seller
    */
   updateSellerStatus: async (req, res) => {
-    const { id } = sellerIdParamSchema.parse(req.params);
-    const { status, reason } = updateSellerStatusSchema.parse(req.body);
+    const { id } = sellerIdParamSchema.parse(req.params)
+    const { status, reason } = updateSellerStatusSchema.parse(req.body)
 
-    const updated = await adminService.updateSellerStatus(id, status, reason);
+    const updated = await adminService.updateSellerStatus(id, status, reason)
 
     return ApiResponse.success(res, {
       message: `Seller status updated to '${status}' successfully`,
-      data: updated,
-    });
+      data: updated
+    })
   },
 
   /**
@@ -61,15 +61,15 @@ export const adminController = {
    * Override seller platform commission rate
    */
   updateSellerCommission: async (req, res) => {
-    const { id } = sellerIdParamSchema.parse(req.params);
-    const { commission_rate } = updateCommissionSchema.parse(req.body);
+    const { id } = sellerIdParamSchema.parse(req.params)
+    const { commission_rate } = updateCommissionSchema.parse(req.body)
 
-    const updated = await adminService.updateCommissionRate(id, commission_rate);
+    const updated = await adminService.updateCommissionRate(id, commission_rate)
 
     return ApiResponse.success(res, {
       message: `Seller commission rate set to ${commission_rate}% successfully`,
-      data: updated,
-    });
+      data: updated
+    })
   },
 
   /**
@@ -77,11 +77,11 @@ export const adminController = {
    * List all categories for administrative hierarchy tree
    */
   getCategories: async (req, res) => {
-    const categories = await adminService.getCategories();
+    const categories = await adminService.getCategories()
     return ApiResponse.success(res, {
       message: 'Admin categories list retrieved successfully',
-      data: categories,
-    });
+      data: categories
+    })
   },
 
   /**
@@ -89,13 +89,13 @@ export const adminController = {
    * Create a new category
    */
   createCategory: async (req, res) => {
-    const payload = adminCategorySchema.parse(req.body);
-    const created = await adminService.createCategory(payload);
+    const payload = adminCategorySchema.parse(req.body)
+    const created = await adminService.createCategory(payload)
     return ApiResponse.success(res, {
       message: `Category '${created.name}' created successfully`,
       data: created,
-      statusCode: 201,
-    });
+      statusCode: 201
+    })
   },
 
   /**
@@ -103,13 +103,13 @@ export const adminController = {
    * Update category
    */
   updateCategory: async (req, res) => {
-    const { id } = req.params;
-    const payload = adminCategorySchema.partial().parse(req.body);
-    const updated = await adminService.updateCategory(id, payload);
+    const { id } = req.params
+    const payload = adminCategorySchema.partial().parse(req.body)
+    const updated = await adminService.updateCategory(id, payload)
     return ApiResponse.success(res, {
-      message: `Category updated successfully`,
-      data: updated,
-    });
+      message: 'Category updated successfully',
+      data: updated
+    })
   },
 
   /**
@@ -117,11 +117,11 @@ export const adminController = {
    * Remove a category
    */
   deleteCategory: async (req, res) => {
-    const { id } = req.params;
-    const deleted = await adminService.deleteCategory(id);
+    const { id } = req.params
+    const deleted = await adminService.deleteCategory(id)
     return ApiResponse.success(res, {
-      message: `Category removed successfully`,
-      data: deleted,
-    });
-  },
-};
+      message: 'Category removed successfully',
+      data: deleted
+    })
+  }
+}

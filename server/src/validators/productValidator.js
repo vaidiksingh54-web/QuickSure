@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from 'zod'
 
 export const createVariantSchema = z.object({
   sku: z.string().trim().min(3, 'SKU must be at least 3 characters').max(80),
@@ -7,21 +7,21 @@ export const createVariantSchema = z.object({
   compare_at_price: z.coerce.number().min(0).optional().nullable(),
   stock_quantity: z.coerce.number().int().min(0, 'Stock cannot be negative').default(0),
   attributes: z.record(z.any()).default({}),
-  is_active: z.boolean().default(true),
+  is_active: z.boolean().default(true)
 }).refine(
   (data) => !data.compare_at_price || data.compare_at_price >= data.price,
   {
     message: 'Compare at price must be greater than or equal to sale price',
-    path: ['compare_at_price'],
+    path: ['compare_at_price']
   }
-);
+)
 
 export const productImageSchema = z.object({
   image_url: z.string().url('Must be a valid image URL'),
   alt_text: z.string().trim().max(200).optional().nullable(),
   is_primary: z.boolean().default(false),
-  display_order: z.coerce.number().int().default(0),
-});
+  display_order: z.coerce.number().int().default(0)
+})
 
 export const createProductSchema = z.object({
   title: z.string().trim().min(3, 'Title must be at least 3 characters').max(255),
@@ -31,8 +31,8 @@ export const createProductSchema = z.object({
   category_id: z.string().uuid('Category ID must be a valid UUID'),
   specifications: z.record(z.any()).default({}),
   variants: z.array(createVariantSchema).min(1, 'Product must have at least one variant SKU'),
-  images: z.array(productImageSchema).min(1, 'Product must have at least one image'),
-});
+  images: z.array(productImageSchema).min(1, 'Product must have at least one image')
+})
 
 export const updateProductSchema = z.object({
   title: z.string().trim().min(3).max(255).optional(),
@@ -40,8 +40,8 @@ export const updateProductSchema = z.object({
   description: z.string().trim().min(10).optional(),
   category_id: z.string().uuid().optional(),
   specifications: z.record(z.any()).optional(),
-  is_active: z.boolean().optional(),
-});
+  is_active: z.boolean().optional()
+})
 
 export const productQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
@@ -50,5 +50,5 @@ export const productQuerySchema = z.object({
   category: z.string().trim().optional(),
   min_price: z.coerce.number().min(0).optional(),
   max_price: z.coerce.number().min(0).optional(),
-  sort_by: z.enum(['featured', 'price_asc', 'price_desc', 'rating', 'newest']).default('featured'),
-});
+  sort_by: z.enum(['featured', 'price_asc', 'price_desc', 'rating', 'newest']).default('featured')
+})

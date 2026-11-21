@@ -1,4 +1,4 @@
-import { ForbiddenError, UnauthorizedError } from '../utils/errors.js';
+import { ForbiddenError, UnauthorizedError } from '../utils/errors.js'
 
 /**
  * Role-Based Access Control (RBAC) Middleware
@@ -8,7 +8,7 @@ import { ForbiddenError, UnauthorizedError } from '../utils/errors.js';
 export const requireRole = (...allowedRoles) => {
   return (req, res, next) => {
     if (!req.user) {
-      return next(new UnauthorizedError('Authentication required'));
+      return next(new UnauthorizedError('Authentication required'))
     }
 
     if (!allowedRoles.includes(req.user.role)) {
@@ -16,12 +16,12 @@ export const requireRole = (...allowedRoles) => {
         new ForbiddenError(
           `Access denied. This endpoint requires one of the following roles: [${allowedRoles.join(', ')}]. Current role: '${req.user.role}'`
         )
-      );
+      )
     }
 
-    next();
-  };
-};
+    next()
+  }
+}
 
 /**
  * Seller Verification Guard
@@ -29,18 +29,18 @@ export const requireRole = (...allowedRoles) => {
  */
 export const requireApprovedSeller = (req, res, next) => {
   if (!req.user) {
-    return next(new UnauthorizedError('Authentication required'));
+    return next(new UnauthorizedError('Authentication required'))
   }
 
   if (req.user.role !== 'seller') {
-    return next(new ForbiddenError('Access denied: Seller account required'));
+    return next(new ForbiddenError('Access denied: Seller account required'))
   }
 
   if (!req.seller || req.seller.status !== 'approved') {
     return next(
       new ForbiddenError('Your seller store is pending approval or has been suspended by an administrator.')
-    );
+    )
   }
 
-  next();
-};
+  next()
+}

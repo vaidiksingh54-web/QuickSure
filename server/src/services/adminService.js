@@ -1,9 +1,9 @@
-import { supabaseAdmin } from '../config/supabase.js';
-import { env } from '../config/env.js';
-import { NotFoundError, ConflictError, AppError } from '../utils/errors.js';
+import { supabaseAdmin } from '../config/supabase.js'
+import { env } from '../config/env.js'
+import { NotFoundError, ConflictError, AppError } from '../utils/errors.js'
 
 // In-memory mock sellers and platform data for local test environment
-let mockAdminSellers = {
+const mockAdminSellers = {
   'seller-0001-0000-0000-000000000001': {
     id: 'seller-0001-0000-0000-000000000001',
     user_id: '22222222-2222-2222-2222-222222222222',
@@ -14,7 +14,7 @@ let mockAdminSellers = {
     status: 'approved',
     created_at: '2026-11-20T10:00:00Z',
     updated_at: '2026-11-20T10:00:00Z',
-    products_count: 14,
+    products_count: 14
   },
   'seller-0002-0000-0000-000000000002': {
     id: 'seller-0002-0000-0000-000000000002',
@@ -26,7 +26,7 @@ let mockAdminSellers = {
     status: 'approved',
     created_at: '2026-11-20T11:00:00Z',
     updated_at: '2026-11-20T11:00:00Z',
-    products_count: 8,
+    products_count: 8
   },
   'seller-0003-0000-0000-000000000003': {
     id: 'seller-0003-0000-0000-000000000003',
@@ -38,17 +38,17 @@ let mockAdminSellers = {
     status: 'pending',
     created_at: '2026-11-21T01:00:00Z',
     updated_at: '2026-11-21T01:00:00Z',
-    products_count: 0,
-  },
-};
+    products_count: 0
+  }
+}
 
-let mockCategories = [
+const mockCategories = [
   { id: 'cat-001', name: 'Electronics', slug: 'electronics', parent_id: null, is_active: true, display_order: 1, product_count: 24 },
   { id: 'cat-002', name: 'Smartphones', slug: 'smartphones', parent_id: 'cat-001', is_active: true, display_order: 1, product_count: 12 },
   { id: 'cat-003', name: 'Audio & Sound', slug: 'audio-sound', parent_id: 'cat-001', is_active: true, display_order: 2, product_count: 8 },
   { id: 'cat-004', name: 'Fashion & Apparel', slug: 'fashion', parent_id: null, is_active: true, display_order: 2, product_count: 32 },
-  { id: 'cat-005', name: 'Home & Kitchen', slug: 'home-kitchen', parent_id: null, is_active: true, display_order: 3, product_count: 18 },
-];
+  { id: 'cat-005', name: 'Home & Kitchen', slug: 'home-kitchen', parent_id: null, is_active: true, display_order: 3, product_count: 18 }
+]
 
 export const adminService = {
   /**
@@ -56,9 +56,9 @@ export const adminService = {
    */
   getPlatformStats: async () => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const sellersList = Object.values(mockAdminSellers);
-      const approvedSellers = sellersList.filter((s) => s.status === 'approved').length;
-      const pendingSellers = sellersList.filter((s) => s.status === 'pending').length;
+      const sellersList = Object.values(mockAdminSellers)
+      const approvedSellers = sellersList.filter((s) => s.status === 'approved').length
+      const pendingSellers = sellersList.filter((s) => s.status === 'pending').length
 
       return {
         financials: {
@@ -66,44 +66,44 @@ export const adminService = {
           platform_commission_earned: 41250.00,
           net_seller_payouts: 343340.00,
           average_order_value: 2465.00,
-          currency: 'INR',
+          currency: 'INR'
         },
         orders: {
           total_orders: 156,
           completed_orders: 142,
           shipped_orders: 8,
           pending_fulfillment: 6,
-          cancelled_orders: 0,
+          cancelled_orders: 0
         },
         sellers: {
           total_sellers: sellersList.length,
           approved_sellers: approvedSellers,
           pending_approvals: pendingSellers,
-          suspended_sellers: sellersList.filter((s) => s.status === 'suspended').length,
+          suspended_sellers: sellersList.filter((s) => s.status === 'suspended').length
         },
         catalog: {
           total_products: 48,
           total_categories: mockCategories.length,
-          active_coupons: 4,
-        },
-      };
+          active_coupons: 4
+        }
+      }
     }
 
     // Production: Supabase queries
-    const { count: totalOrders } = await supabaseAdmin.from('orders').select('*', { count: 'exact', head: true });
-    const { count: completedOrders } = await supabaseAdmin.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'completed');
-    const { count: approvedSellers } = await supabaseAdmin.from('sellers').select('*', { count: 'exact', head: true }).eq('status', 'approved');
-    const { count: pendingSellers } = await supabaseAdmin.from('sellers').select('*', { count: 'exact', head: true }).eq('status', 'pending');
-    const { count: totalProducts } = await supabaseAdmin.from('products').select('*', { count: 'exact', head: true }).eq('is_deleted', false);
+    const { count: totalOrders } = await supabaseAdmin.from('orders').select('*', { count: 'exact', head: true })
+    const { count: completedOrders } = await supabaseAdmin.from('orders').select('*', { count: 'exact', head: true }).eq('status', 'completed')
+    const { count: approvedSellers } = await supabaseAdmin.from('sellers').select('*', { count: 'exact', head: true }).eq('status', 'approved')
+    const { count: pendingSellers } = await supabaseAdmin.from('sellers').select('*', { count: 'exact', head: true }).eq('status', 'pending')
+    const { count: totalProducts } = await supabaseAdmin.from('products').select('*', { count: 'exact', head: true }).eq('is_deleted', false)
 
     // Sum totals from sub_orders
     const { data: subOrderTotals } = await supabaseAdmin
       .from('sub_orders')
-      .select('subtotal, commission_fee, seller_payout_amount');
+      .select('subtotal, commission_fee, seller_payout_amount')
 
-    const gmv = (subOrderTotals || []).reduce((sum, so) => sum + Number(so.subtotal || 0), 0);
-    const commission = (subOrderTotals || []).reduce((sum, so) => sum + Number(so.commission_fee || 0), 0);
-    const payouts = (subOrderTotals || []).reduce((sum, so) => sum + Number(so.seller_payout_amount || 0), 0);
+    const gmv = (subOrderTotals || []).reduce((sum, so) => sum + Number(so.subtotal || 0), 0)
+    const commission = (subOrderTotals || []).reduce((sum, so) => sum + Number(so.commission_fee || 0), 0)
+    const payouts = (subOrderTotals || []).reduce((sum, so) => sum + Number(so.seller_payout_amount || 0), 0)
 
     return {
       financials: {
@@ -111,20 +111,20 @@ export const adminService = {
         platform_commission_earned: Math.round(commission * 100) / 100,
         net_seller_payouts: Math.round(payouts * 100) / 100,
         average_order_value: totalOrders > 0 ? Math.round((gmv / totalOrders) * 100) / 100 : 0,
-        currency: 'INR',
+        currency: 'INR'
       },
       orders: {
         total_orders: totalOrders || 0,
-        completed_orders: completedOrders || 0,
+        completed_orders: completedOrders || 0
       },
       sellers: {
         approved_sellers: approvedSellers || 0,
-        pending_approvals: pendingSellers || 0,
+        pending_approvals: pendingSellers || 0
       },
       catalog: {
-        total_products: totalProducts || 0,
-      },
-    };
+        total_products: totalProducts || 0
+      }
+    }
   },
 
   /**
@@ -132,25 +132,25 @@ export const adminService = {
    */
   getSellers: async ({ status = null, page = 1, limit = 10 }) => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      let list = Object.values(mockAdminSellers);
+      let list = Object.values(mockAdminSellers)
       if (status) {
-        list = list.filter((s) => s.status === status);
+        list = list.filter((s) => s.status === status)
       }
-      const total = list.length;
-      const start = (page - 1) * limit;
-      const paged = list.slice(start, start + limit);
-      return { sellers: paged, total, page, limit };
+      const total = list.length
+      const start = (page - 1) * limit
+      const paged = list.slice(start, start + limit)
+      return { sellers: paged, total, page, limit }
     }
 
-    let query = supabaseAdmin.from('sellers').select('*, profiles(email, full_name, phone)', { count: 'exact' });
-    if (status) query = query.eq('status', status);
+    let query = supabaseAdmin.from('sellers').select('*, profiles(email, full_name, phone)', { count: 'exact' })
+    if (status) query = query.eq('status', status)
 
-    const from = (page - 1) * limit;
-    const to = from + limit - 1;
-    const { data, count, error } = await query.order('created_at', { ascending: false }).range(from, to);
+    const from = (page - 1) * limit
+    const to = from + limit - 1
+    const { data, count, error } = await query.order('created_at', { ascending: false }).range(from, to)
 
-    if (error) throw new AppError(`Failed to fetch sellers: ${error.message}`, 500);
-    return { sellers: data || [], total: count || 0, page, limit };
+    if (error) throw new AppError(`Failed to fetch sellers: ${error.message}`, 500)
+    return { sellers: data || [], total: count || 0, page, limit }
   },
 
   /**
@@ -158,14 +158,14 @@ export const adminService = {
    */
   updateSellerStatus: async (sellerId, newStatus, reason = null) => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const seller = mockAdminSellers[sellerId];
-      if (!seller) throw new NotFoundError(`Seller '${sellerId}' not found`);
+      const seller = mockAdminSellers[sellerId]
+      if (!seller) throw new NotFoundError(`Seller '${sellerId}' not found`)
 
-      seller.status = newStatus;
-      seller.status_reason = reason;
-      seller.updated_at = new Date().toISOString();
+      seller.status = newStatus
+      seller.status_reason = reason
+      seller.updated_at = new Date().toISOString()
 
-      return seller;
+      return seller
     }
 
     const { data, error } = await supabaseAdmin
@@ -173,10 +173,10 @@ export const adminService = {
       .update({ status: newStatus, updated_at: new Date().toISOString() })
       .eq('id', sellerId)
       .select()
-      .single();
+      .single()
 
-    if (error || !data) throw new NotFoundError(`Seller '${sellerId}' not found`);
-    return data;
+    if (error || !data) throw new NotFoundError(`Seller '${sellerId}' not found`)
+    return data
   },
 
   /**
@@ -184,13 +184,13 @@ export const adminService = {
    */
   updateCommissionRate: async (sellerId, commissionRate) => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const seller = mockAdminSellers[sellerId];
-      if (!seller) throw new NotFoundError(`Seller '${sellerId}' not found`);
+      const seller = mockAdminSellers[sellerId]
+      if (!seller) throw new NotFoundError(`Seller '${sellerId}' not found`)
 
-      seller.commission_rate = Number(commissionRate);
-      seller.updated_at = new Date().toISOString();
+      seller.commission_rate = Number(commissionRate)
+      seller.updated_at = new Date().toISOString()
 
-      return seller;
+      return seller
     }
 
     const { data, error } = await supabaseAdmin
@@ -198,10 +198,10 @@ export const adminService = {
       .update({ commission_rate: Number(commissionRate), updated_at: new Date().toISOString() })
       .eq('id', sellerId)
       .select()
-      .single();
+      .single()
 
-    if (error || !data) throw new NotFoundError(`Seller '${sellerId}' not found`);
-    return data;
+    if (error || !data) throw new NotFoundError(`Seller '${sellerId}' not found`)
+    return data
   },
 
   /**
@@ -209,53 +209,53 @@ export const adminService = {
    */
   getCategories: async () => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      return mockCategories;
+      return mockCategories
     }
 
     const { data, error } = await supabaseAdmin
       .from('categories')
       .select('*')
-      .order('display_order', { ascending: true });
+      .order('display_order', { ascending: true })
 
-    if (error) throw new AppError(`Failed to fetch categories: ${error.message}`, 500);
-    return data || [];
+    if (error) throw new AppError(`Failed to fetch categories: ${error.message}`, 500)
+    return data || []
   },
 
   createCategory: async (categoryData) => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const exists = mockCategories.some((c) => c.slug === categoryData.slug);
-      if (exists) throw new ConflictError(`Category with slug '${categoryData.slug}' already exists`);
+      const exists = mockCategories.some((c) => c.slug === categoryData.slug)
+      if (exists) throw new ConflictError(`Category with slug '${categoryData.slug}' already exists`)
 
       const newCat = {
         id: `cat-${Date.now()}`,
         ...categoryData,
         product_count: 0,
-        created_at: new Date().toISOString(),
-      };
-      mockCategories.push(newCat);
-      return newCat;
+        created_at: new Date().toISOString()
+      }
+      mockCategories.push(newCat)
+      return newCat
     }
 
     const { data, error } = await supabaseAdmin
       .from('categories')
       .insert(categoryData)
       .select()
-      .single();
+      .single()
 
     if (error) {
-      if (error.code === '23505') throw new ConflictError(`Category slug already exists`);
-      throw new AppError(`Failed to create category: ${error.message}`, 500);
+      if (error.code === '23505') throw new ConflictError('Category slug already exists')
+      throw new AppError(`Failed to create category: ${error.message}`, 500)
     }
-    return data;
+    return data
   },
 
   updateCategory: async (categoryId, updateData) => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const cat = mockCategories.find((c) => c.id === categoryId);
-      if (!cat) throw new NotFoundError(`Category '${categoryId}' not found`);
+      const cat = mockCategories.find((c) => c.id === categoryId)
+      if (!cat) throw new NotFoundError(`Category '${categoryId}' not found`)
 
-      Object.assign(cat, updateData);
-      return cat;
+      Object.assign(cat, updateData)
+      return cat
     }
 
     const { data, error } = await supabaseAdmin
@@ -263,19 +263,19 @@ export const adminService = {
       .update(updateData)
       .eq('id', categoryId)
       .select()
-      .single();
+      .single()
 
-    if (error || !data) throw new NotFoundError(`Category '${categoryId}' not found`);
-    return data;
+    if (error || !data) throw new NotFoundError(`Category '${categoryId}' not found`)
+    return data
   },
 
   deleteCategory: async (categoryId) => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const idx = mockCategories.findIndex((c) => c.id === categoryId);
-      if (idx === -1) throw new NotFoundError(`Category '${categoryId}' not found`);
+      const idx = mockCategories.findIndex((c) => c.id === categoryId)
+      if (idx === -1) throw new NotFoundError(`Category '${categoryId}' not found`)
 
-      const [removed] = mockCategories.splice(idx, 1);
-      return removed;
+      const [removed] = mockCategories.splice(idx, 1)
+      return removed
     }
 
     const { data, error } = await supabaseAdmin
@@ -283,9 +283,9 @@ export const adminService = {
       .delete()
       .eq('id', categoryId)
       .select()
-      .single();
+      .single()
 
-    if (error) throw new AppError(`Failed to delete category: ${error.message}`, 500);
-    return data;
-  },
-};
+    if (error) throw new AppError(`Failed to delete category: ${error.message}`, 500)
+    return data
+  }
+}

@@ -4,31 +4,31 @@
  */
 
 export class ApiResponse {
-  static success(res, { data = null, message = 'Operation successful', meta = {}, statusCode = 200 }) {
+  static success (res, { data = null, message = 'Operation successful', meta = {}, statusCode = 200 }) {
     return res.status(statusCode).json({
       success: true,
       message,
       data,
       error: null,
-      meta,
-    });
+      meta
+    })
   }
 
-  static error(res, { message = 'Internal server error', code = 'INTERNAL_ERROR', details = null, statusCode = 500 }) {
+  static error (res, { message = 'Internal server error', code = 'INTERNAL_ERROR', details = null, statusCode = 500 }) {
     return res.status(statusCode).json({
       success: false,
       message,
       data: null,
       error: {
         code,
-        details,
+        details
       },
-      meta: {},
-    });
+      meta: {}
+    })
   }
 
-  static paginated(res, { data = [], total = 0, page = 1, limit = 12, message = 'Data fetched successfully' }) {
-    const totalPages = Math.ceil(total / limit) || 1;
+  static paginated (res, { data = [], total = 0, page = 1, limit = 12, message = 'Data fetched successfully' }) {
+    const totalPages = Math.ceil(total / limit) || 1
     return res.status(200).json({
       success: true,
       message,
@@ -40,8 +40,8 @@ export class ApiResponse {
         limit,
         totalPages,
         hasNext: page < totalPages,
-        hasPrev: page > 1,
-      },
-    });
+        hasPrev: page > 1
+      }
+    })
   }
 }

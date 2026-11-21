@@ -1,7 +1,7 @@
-import dotenv from 'dotenv';
-import { z } from 'zod';
+import dotenv from 'dotenv'
+import { z } from 'zod'
 
-dotenv.config();
+dotenv.config()
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(5000),
@@ -11,14 +11,14 @@ const envSchema = z.object({
   SUPABASE_ANON_KEY: z.string().min(1, 'SUPABASE_ANON_KEY is required'),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1, 'SUPABASE_SERVICE_ROLE_KEY is required'),
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(900000),
-  RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(300),
-});
+  RATE_LIMIT_MAX_REQUESTS: z.coerce.number().default(300)
+})
 
-const parsed = envSchema.safeParse(process.env);
+const parsed = envSchema.safeParse(process.env)
 
 if (!parsed.success) {
-  console.error('❌ Environment validation failed:', parsed.error.format());
-  process.exit(1);
+  console.error('❌ Environment validation failed:', parsed.error.format())
+  process.exit(1)
 }
 
-export const env = parsed.data;
+export const env = parsed.data

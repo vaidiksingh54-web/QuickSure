@@ -1,19 +1,19 @@
-import { Router } from 'express';
-import { authController } from '../controllers/authController.js';
-import { requireAuth } from '../middlewares/authMiddleware.js';
-import { requireRole, requireApprovedSeller } from '../middlewares/roleMiddleware.js';
-import { asyncHandler } from '../utils/asyncHandler.js';
-import { ApiResponse } from '../utils/apiResponse.js';
+import { Router } from 'express'
+import { authController } from '../controllers/authController.js'
+import { requireAuth } from '../middlewares/authMiddleware.js'
+import { requireRole, requireApprovedSeller } from '../middlewares/roleMiddleware.js'
+import { asyncHandler } from '../utils/asyncHandler.js'
+import { ApiResponse } from '../utils/apiResponse.js'
 
-const router = Router();
+const router = Router()
 
 // All auth routes require valid authentication
-router.use(requireAuth);
+router.use(requireAuth)
 
 // Profile management
-router.get('/me', asyncHandler(authController.getMe));
-router.put('/profile', asyncHandler(authController.updateProfile));
-router.post('/sync-session', asyncHandler(authController.syncSession));
+router.get('/me', asyncHandler(authController.getMe))
+router.put('/profile', asyncHandler(authController.updateProfile))
+router.post('/sync-session', asyncHandler(authController.syncSession))
 
 // RBAC Verification Endpoints
 router.get(
@@ -22,10 +22,10 @@ router.get(
   asyncHandler((req, res) => {
     return ApiResponse.success(res, {
       message: 'Authorized: Administrative privileges verified',
-      data: { user: req.user },
-    });
+      data: { user: req.user }
+    })
   })
-);
+)
 
 router.get(
   '/seller-check',
@@ -34,9 +34,9 @@ router.get(
   asyncHandler((req, res) => {
     return ApiResponse.success(res, {
       message: 'Authorized: Approved seller store verified',
-      data: { user: req.user, seller: req.seller },
-    });
+      data: { user: req.user, seller: req.seller }
+    })
   })
-);
+)
 
-export default router;
+export default router

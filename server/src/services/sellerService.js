@@ -1,10 +1,10 @@
-import { supabaseAdmin } from '../config/supabase.js';
-import { env } from '../config/env.js';
-import { NotFoundError, ForbiddenError, ConflictError, AppError } from '../utils/errors.js';
-import { orderService } from './orderService.js';
+import { supabaseAdmin } from '../config/supabase.js'
+import { env } from '../config/env.js'
+import { NotFoundError, ForbiddenError, ConflictError, AppError } from '../utils/errors.js'
+import { orderService } from './orderService.js'
 
 // In-memory mock stores for local test environment
-let mockSellersByUserId = {
+const mockSellersByUserId = {
   '22222222-2222-2222-2222-222222222222': {
     id: 'seller-0001-0000-0000-000000000001',
     user_id: '22222222-2222-2222-2222-222222222222',
@@ -16,11 +16,11 @@ let mockSellersByUserId = {
     logo_url: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=100',
     banner_url: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=800',
     created_at: '2026-11-20T10:00:00Z',
-    updated_at: '2026-11-20T10:00:00Z',
-  },
-};
+    updated_at: '2026-11-20T10:00:00Z'
+  }
+}
 
-let mockSellerProducts = {
+const mockSellerProducts = {
   'seller-0001-0000-0000-000000000001': [
     {
       id: 'p0000001-0000-0000-0000-000000000001',
@@ -30,8 +30,8 @@ let mockSellerProducts = {
       category: 'Electronics',
       variants: [
         { id: 'v0000001-0000-0000-0000-000000000001', sku: 'SP-ANC-BLK', price: 2499.00, stock_quantity: 45, variant_name: 'Black' },
-        { id: 'v0000001-0000-0000-0000-000000000002', sku: 'SP-ANC-SLV', price: 2599.00, stock_quantity: 18, variant_name: 'Silver' },
-      ],
+        { id: 'v0000001-0000-0000-0000-000000000002', sku: 'SP-ANC-SLV', price: 2599.00, stock_quantity: 18, variant_name: 'Silver' }
+      ]
     },
     {
       id: 'p0000001-0000-0000-0000-000000000002',
@@ -40,11 +40,11 @@ let mockSellerProducts = {
       slug: 'aerowatch-s5-smartwatch',
       category: 'Electronics',
       variants: [
-        { id: 'v0000001-0000-0000-0000-000000000003', sku: 'AW-S5-OBS', price: 1899.00, stock_quantity: 32, variant_name: 'Obsidian' },
-      ],
-    },
-  ],
-};
+        { id: 'v0000001-0000-0000-0000-000000000003', sku: 'AW-S5-OBS', price: 1899.00, stock_quantity: 32, variant_name: 'Obsidian' }
+      ]
+    }
+  ]
+}
 
 export const sellerService = {
   /**
@@ -52,23 +52,23 @@ export const sellerService = {
    */
   getStoreProfile: async (userId) => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const profile = mockSellersByUserId[userId];
+      const profile = mockSellersByUserId[userId]
       if (!profile) {
-        throw new NotFoundError('No store profile found. Please complete seller onboarding.');
+        throw new NotFoundError('No store profile found. Please complete seller onboarding.')
       }
-      return profile;
+      return profile
     }
 
     const { data, error } = await supabaseAdmin
       .from('sellers')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .single()
 
     if (error || !data) {
-      throw new NotFoundError('No store profile found. Please complete seller onboarding.');
+      throw new NotFoundError('No store profile found. Please complete seller onboarding.')
     }
-    return data;
+    return data
   },
 
   /**
@@ -76,10 +76,10 @@ export const sellerService = {
    */
   upsertStoreProfile: async (userId, profileData) => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      let existing = mockSellersByUserId[userId];
+      const existing = mockSellersByUserId[userId]
       if (existing) {
-        Object.assign(existing, profileData, { updated_at: new Date().toISOString() });
-        return existing;
+        Object.assign(existing, profileData, { updated_at: new Date().toISOString() })
+        return existing
       }
 
       const newSeller = {
@@ -89,18 +89,18 @@ export const sellerService = {
         commission_rate: 10.00,
         status: 'pending', // Requires admin approval
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      mockSellersByUserId[userId] = newSeller;
-      if (!mockSellerProducts[newSeller.id]) mockSellerProducts[newSeller.id] = [];
-      return newSeller;
+        updated_at: new Date().toISOString()
+      }
+      mockSellersByUserId[userId] = newSeller
+      if (!mockSellerProducts[newSeller.id]) mockSellerProducts[newSeller.id] = []
+      return newSeller
     }
 
     const { data: existing } = await supabaseAdmin
       .from('sellers')
       .select('id')
       .eq('user_id', userId)
-      .single();
+      .single()
 
     if (existing) {
       const { data, error } = await supabaseAdmin
@@ -108,10 +108,10 @@ export const sellerService = {
         .update({ ...profileData, updated_at: new Date().toISOString() })
         .eq('id', existing.id)
         .select()
-        .single();
+        .single()
 
-      if (error) throw new AppError(`Failed to update store: ${error.message}`, 500);
-      return data;
+      if (error) throw new AppError(`Failed to update store: ${error.message}`, 500)
+      return data
     }
 
     const { data, error } = await supabaseAdmin
@@ -119,31 +119,31 @@ export const sellerService = {
       .insert({
         user_id: userId,
         ...profileData,
-        status: 'pending',
+        status: 'pending'
       })
       .select()
-      .single();
+      .single()
 
     if (error) {
-      if (error.code === '23505') throw new ConflictError('Store name or slug already exists');
-      throw new AppError(`Failed to create store: ${error.message}`, 500);
+      if (error.code === '23505') throw new ConflictError('Store name or slug already exists')
+      throw new AppError(`Failed to create store: ${error.message}`, 500)
     }
-    return data;
+    return data
   },
 
   /**
    * Get all products owned by authenticated seller
    */
   getSellerProducts: async (userId) => {
-    const profile = await sellerService.getStoreProfile(userId);
+    const profile = await sellerService.getStoreProfile(userId)
 
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const products = mockSellerProducts[profile.id] || [];
+      const products = mockSellerProducts[profile.id] || []
       return {
         products,
         total: products.length,
-        store_name: profile.store_name,
-      };
+        store_name: profile.store_name
+      }
     }
 
     const { data, error, count } = await supabaseAdmin
@@ -151,10 +151,10 @@ export const sellerService = {
       .select('*, product_variants(*), product_images(*)', { count: 'exact' })
       .eq('seller_id', profile.id)
       .eq('is_deleted', false)
-      .order('created_at', { ascending: false });
+      .order('created_at', { ascending: false })
 
-    if (error) throw new AppError(`Failed to fetch seller products: ${error.message}`, 500);
-    return { products: data || [], total: count || 0, store_name: profile.store_name };
+    if (error) throw new AppError(`Failed to fetch seller products: ${error.message}`, 500)
+    return { products: data || [], total: count || 0, store_name: profile.store_name }
   },
 
   /**
@@ -162,31 +162,31 @@ export const sellerService = {
    * ENFORCES RULE 5: Verifies that the variant's parent product belongs to this seller (IDOR protection).
    */
   updateVariantStock: async (userId, variantId, stockQuantity) => {
-    const profile = await sellerService.getStoreProfile(userId);
+    const profile = await sellerService.getStoreProfile(userId)
 
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const myProducts = mockSellerProducts[profile.id] || [];
-      let foundVariant = null;
+      const myProducts = mockSellerProducts[profile.id] || []
+      let foundVariant = null
 
       for (const prod of myProducts) {
-        const v = prod.variants.find((item) => item.id === variantId);
+        const v = prod.variants.find((item) => item.id === variantId)
         if (v) {
-          foundVariant = v;
-          break;
+          foundVariant = v
+          break
         }
       }
 
       if (!foundVariant) {
-        throw new ForbiddenError('Access denied: You do not own this product variant (IDOR Protection)');
+        throw new ForbiddenError('Access denied: You do not own this product variant (IDOR Protection)')
       }
 
-      foundVariant.stock_quantity = stockQuantity;
+      foundVariant.stock_quantity = stockQuantity
       return {
         variant_id: variantId,
         sku: foundVariant.sku,
         stock_quantity: foundVariant.stock_quantity,
-        updated_at: new Date().toISOString(),
-      };
+        updated_at: new Date().toISOString()
+      }
     }
 
     // Verify ownership via join in Supabase
@@ -194,12 +194,12 @@ export const sellerService = {
       .from('product_variants')
       .select('id, sku, products!inner(seller_id)')
       .eq('id', variantId)
-      .single();
+      .single()
 
-    if (varError || !variant) throw new NotFoundError(`Variant '${variantId}' not found`);
+    if (varError || !variant) throw new NotFoundError(`Variant '${variantId}' not found`)
 
     if (variant.products.seller_id !== profile.id) {
-      throw new ForbiddenError('Access denied: You do not own this product variant (IDOR Protection)');
+      throw new ForbiddenError('Access denied: You do not own this product variant (IDOR Protection)')
     }
 
     const { data, error } = await supabaseAdmin
@@ -207,10 +207,10 @@ export const sellerService = {
       .update({ stock_quantity: stockQuantity })
       .eq('id', variantId)
       .select('id, sku, stock_quantity')
-      .single();
+      .single()
 
-    if (error) throw new AppError(`Failed to update stock: ${error.message}`, 500);
-    return data;
+    if (error) throw new AppError(`Failed to update stock: ${error.message}`, 500)
+    return data
   },
 
   /**
@@ -221,7 +221,7 @@ export const sellerService = {
     return orderService.updateSubOrderStatus(subOrderId, 'shipped', userId, 'seller', {
       courier_name,
       tracking_number,
-      notes: notes || `Dispatched by vendor with tracking number ${tracking_number}`,
-    });
-  },
-};
+      notes: notes || `Dispatched by vendor with tracking number ${tracking_number}`
+    })
+  }
+}
