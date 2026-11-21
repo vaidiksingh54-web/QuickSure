@@ -7,6 +7,7 @@ export const globalRateLimiter = rateLimit({
   max: env.RATE_LIMIT_MAX_REQUESTS,
   standardHeaders: true,
   legacyHeaders: false,
+  skipSuccessfulRequests: true,
   handler: (req, res) => {
     return ApiResponse.error(res, {
       statusCode: 429,
