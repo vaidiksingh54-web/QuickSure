@@ -1,42 +1,50 @@
-import { supabaseAdmin } from '../config/supabase.js';
-import { env } from '../config/env.js';
-import { inventoryService } from './inventoryService.js';
-import { ValidationError, NotFoundError } from '../utils/errors.js';
+import { supabaseAdmin } from '../config/supabase.js'
+import { env } from '../config/env.js'
+import { inventoryService } from './inventoryService.js'
+import { ValidationError, NotFoundError } from '../utils/errors.js'
 
 // In-memory demo coupons for test environment
 const mockCoupons = {
-  'QUICK10': {
+  QUICK10: {
     code: 'QUICK10',
     discount_type: 'percentage',
     discount_value: 10.00,
     min_order_amount: 500.00,
     max_discount_amount: 200.00,
-    is_active: true,
+    is_active: true
   },
-  'SURE50': {
+  QUICK100: {
+    code: 'QUICK100',
+    discount_type: 'fixed',
+    discount_value: 100.00,
+    min_order_amount: 500.00,
+    max_discount_amount: 100.00,
+    is_active: true
+  },
+  SURE50: {
     code: 'SURE50',
     discount_type: 'fixed',
     discount_value: 50.00,
     min_order_amount: 300.00,
     max_discount_amount: 50.00,
-    is_active: true,
+    is_active: true
   },
-  'WELCOME200': {
+  WELCOME200: {
     code: 'WELCOME200',
     discount_type: 'fixed',
     discount_value: 200.00,
     min_order_amount: 1500.00,
     max_discount_amount: 200.00,
-    is_active: true,
+    is_active: true
   },
-  'EXPIRED': {
+  EXPIRED: {
     code: 'EXPIRED',
     discount_type: 'percentage',
     discount_value: 50.00,
     min_order_amount: 100.00,
-    is_active: false,
-  },
-};
+    is_active: false
+  }
+}
 
 export const pricingService = {
   /**
@@ -45,18 +53,18 @@ export const pricingService = {
    */
   calculateOrderQuote: async ({ items, couponCode = null, userId = null }) => {
     if (!items || items.length === 0) {
-      throw new ValidationError('Cannot generate quote for empty items list');
+      throw new ValidationError('Cannot generate quote for empty items list')
     }
 
-    let subtotal = 0;
-    const itemsBreakdown = [];
+    let subtotal = 0
+    const itemsBreakdown = []
 
     // 1. Authoritative price lookup per line item
     for (const item of items) {
-      const variant = await inventoryService.getVariantDetails(item.variant_id);
-      const unitPrice = Number(variant.price);
-      const lineTotal = unitPrice * item.quantity;
-      subtotal += lineTotal;
+      const variant = await inventoryService.getVariantDetails(item.variant_id)
+      const unitPrice = Number(variant.price)
+      const lineTotal = unitPrice * item.quantity
+      subtotal += lineTotal
 
       itemsBreakdown.push({
         variant_id: variant.id,
@@ -65,31 +73,31 @@ export const pricingService = {
         unit_price: unitPrice,
         quantity: item.quantity,
         total_price: lineTotal,
-        in_stock: variant.stock_quantity >= item.quantity,
-      });
+        in_stock: variant.stock_quantity >= item.quantity
+      })
     }
 
     // 2. Shipping calculation: Free delivery over ₹500, else ₹40 standard delivery
-    const freeShippingThreshold = 500.00;
-    const standardShippingFee = 40.00;
-    const shippingFee = subtotal >= freeShippingThreshold ? 0.00 : standardShippingFee;
+    const freeShippingThreshold = 500.00
+    const standardShippingFee = 40.00
+    const shippingFee = subtotal >= freeShippingThreshold ? 0.00 : standardShippingFee
 
     // 3. Tax calculation (5% GST standard)
-    const taxRate = 0.05;
-    const taxAmount = Math.round(subtotal * taxRate * 100) / 100;
+    const taxRate = 0.05
+    const taxAmount = Math.round(subtotal * taxRate * 100) / 100
 
     // 4. Coupon validation and discount application
-    let discountAmount = 0.00;
-    let couponDetails = null;
+    let discountAmount = 0.00
+    let couponDetails = null
 
     if (couponCode) {
-      const cleanCode = couponCode.trim().toUpperCase();
-      couponDetails = await pricingService.validateCoupon(cleanCode, subtotal, userId);
-      discountAmount = couponDetails.calculated_discount;
+      const cleanCode = couponCode.trim().toUpperCase()
+      couponDetails = await pricingService.validateCoupon(cleanCode, subtotal, userId)
+      discountAmount = couponDetails.calculated_discount
     }
 
     // 5. Final total calculation
-    const totalAmount = Math.max(0, subtotal - discountAmount + shippingFee + taxAmount);
+    const totalAmount = Math.max(0, subtotal - discountAmount + shippingFee + taxAmount)
 
     return {
       subtotal: Math.round(subtotal * 100) / 100,
@@ -102,12 +110,12 @@ export const pricingService = {
             code: couponDetails.code,
             discount_type: couponDetails.discount_type,
             discount_value: couponDetails.discount_value,
-            savings: discountAmount,
+            savings: discountAmount
           }
         : null,
       items_breakdown: itemsBreakdown,
-      currency: 'INR',
-    };
+      currency: 'INR'
+    }
   },
 
   /**
@@ -115,31 +123,31 @@ export const pricingService = {
    */
   validateCoupon: async (code, subtotal, userId = null) => {
     if (env.NODE_ENV !== 'production' && env.SUPABASE_URL.includes('placeholder.supabase.co')) {
-      const coupon = mockCoupons[code];
+      const coupon = mockCoupons[code]
       if (!coupon || !coupon.is_active) {
-        throw new ValidationError(`Coupon '${code}' is invalid or has expired.`);
+        throw new ValidationError(`Coupon '${code}' is invalid or has expired.`)
       }
 
       if (subtotal < coupon.min_order_amount) {
         throw new ValidationError(
           `Coupon '${code}' requires a minimum cart value of ₹${coupon.min_order_amount}. (Current: ₹${subtotal})`
-        );
+        )
       }
 
-      let discount = 0;
+      let discount = 0
       if (coupon.discount_type === 'percentage') {
-        discount = (subtotal * coupon.discount_value) / 100;
+        discount = (subtotal * coupon.discount_value) / 100
         if (coupon.max_discount_amount && discount > coupon.max_discount_amount) {
-          discount = coupon.max_discount_amount;
+          discount = coupon.max_discount_amount
         }
       } else {
-        discount = Math.min(coupon.discount_value, subtotal);
+        discount = Math.min(coupon.discount_value, subtotal)
       }
 
       return {
         ...coupon,
-        calculated_discount: discount,
-      };
+        calculated_discount: discount
+      }
     }
 
     // Database lookup in Supabase
@@ -148,23 +156,23 @@ export const pricingService = {
       .select('*')
       .eq('code', code)
       .eq('is_active', true)
-      .single();
+      .single()
 
     if (error || !coupon) {
-      throw new ValidationError(`Coupon '${code}' is invalid.`);
+      throw new ValidationError(`Coupon '${code}' is invalid.`)
     }
 
     // Check expiry
-    const now = new Date();
+    const now = new Date()
     if (new Date(coupon.starts_at) > now || new Date(coupon.expires_at) < now) {
-      throw new ValidationError(`Coupon '${code}' has expired.`);
+      throw new ValidationError(`Coupon '${code}' has expired.`)
     }
 
     // Check minimum spend
     if (subtotal < Number(coupon.min_order_amount)) {
       throw new ValidationError(
         `Coupon '${code}' requires a minimum cart spend of ₹${coupon.min_order_amount}.`
-      );
+      )
     }
 
     // Check single-use restriction per user
@@ -174,26 +182,26 @@ export const pricingService = {
         .select('id')
         .eq('coupon_id', coupon.id)
         .eq('user_id', userId)
-        .single();
+        .single()
 
       if (redemption) {
-        throw new ValidationError(`You have already redeemed coupon '${code}'. Limit 1 per customer.`);
+        throw new ValidationError(`You have already redeemed coupon '${code}'. Limit 1 per customer.`)
       }
     }
 
-    let discount = 0;
+    let discount = 0
     if (coupon.discount_type === 'percentage') {
-      discount = (subtotal * Number(coupon.discount_value)) / 100;
+      discount = (subtotal * Number(coupon.discount_value)) / 100
       if (coupon.max_discount_amount && discount > Number(coupon.max_discount_amount)) {
-        discount = Number(coupon.max_discount_amount);
+        discount = Number(coupon.max_discount_amount)
       }
     } else {
-      discount = Math.min(Number(coupon.discount_value), subtotal);
+      discount = Math.min(Number(coupon.discount_value), subtotal)
     }
 
     return {
       ...coupon,
-      calculated_discount: discount,
-    };
-  },
-};
+      calculated_discount: discount
+    }
+  }
+}
