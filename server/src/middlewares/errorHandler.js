@@ -4,6 +4,7 @@ import { ZodError } from 'zod'
 import { AppError } from '../utils/errors.js'
 
 export const errorHandler = (err, req, res, next) => {
+  const requestId = req.headers['x-request-id'] || 'unknown'
   logger.error(`Error on ${req.method} ${req.originalUrl}: ${err.message}`, {
     stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
     code: err.code
