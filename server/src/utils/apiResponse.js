@@ -4,6 +4,10 @@
  */
 
 export class ApiResponse {
+  static created (res, { data = null, message = 'Resource created successfully', meta = {} }) {
+    return ApiResponse.success(res, { data, message, meta, statusCode: 201 })
+  }
+
   static success (res, { data = null, message = 'Operation successful', meta = {}, statusCode = 200 }) {
     return res.status(statusCode).json({
       success: true,
