@@ -3,6 +3,17 @@
  * Enforces structured, predictable errors across all Express controllers and services.
  */
 
+export class AppError extends Error {
+  constructor (message, statusCode = 500, code = 'INTERNAL_ERROR', details = null) {
+    super(message)
+    this.name = this.constructor.name
+    this.statusCode = statusCode
+    this.code = code
+    this.details = details
+    Error.captureStackTrace(this, this.constructor)
+  }
+}
+
 export class BadRequestError extends AppError {
   constructor (message = 'Bad request parameters', code = 'BAD_REQUEST', details = null) {
     super(message, 400, code, details)
@@ -12,17 +23,6 @@ export class BadRequestError extends AppError {
 export class RateLimitError extends AppError {
   constructor (message = 'Too many requests, please slow down', code = 'RATE_LIMITED') {
     super(message, 429, code)
-  }
-}
-
-export class AppError extends Error {
-  constructor (message, statusCode = 500, code = 'INTERNAL_ERROR', details = null) {
-    super(message)
-    this.name = this.constructor.name
-    this.statusCode = statusCode
-    this.code = code
-    this.details = details
-    Error.captureStackTrace(this, this.constructor)
   }
 }
 
