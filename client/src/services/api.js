@@ -12,6 +12,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('quicksure_auth_token');
+    config.headers['X-Request-Source'] = 'quicksure-web';
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
