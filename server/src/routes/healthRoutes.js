@@ -43,6 +43,7 @@ router.get('/', async (req, res) => {
       version: '1.0.0',
       uptime: process.uptime(),
       timestamp: new Date().toISOString(),
+      node_version: process.version,
       database: {
         status: dbStatus,
         latencyMs: dbLatencyMs
