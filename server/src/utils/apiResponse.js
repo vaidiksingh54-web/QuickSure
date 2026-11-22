@@ -4,6 +4,10 @@
  */
 
 export class ApiResponse {
+  static badRequest (res, { message = 'Bad request parameters', details = null } = {}) {
+    return ApiResponse.error(res, { message, code: 'BAD_REQUEST', details, statusCode: 400 })
+  }
+
   static noContent (res) {
     return res.status(204).send()
   }
