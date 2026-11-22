@@ -4,6 +4,10 @@
  */
 
 export class ApiResponse {
+  static forbidden (res, { message = 'Access forbidden: insufficient permissions', details = null } = {}) {
+    return ApiResponse.error(res, { message, code: 'FORBIDDEN', details, statusCode: 403 })
+  }
+
   static unauthorized (res, { message = 'Authentication required', details = null } = {}) {
     return ApiResponse.error(res, { message, code: 'UNAUTHORIZED', details, statusCode: 401 })
   }
