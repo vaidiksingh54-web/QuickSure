@@ -4,6 +4,10 @@
  */
 
 export class ApiResponse {
+  static notFound (res, { message = 'Resource not found', details = null } = {}) {
+    return ApiResponse.error(res, { message, code: 'NOT_FOUND', details, statusCode: 404 })
+  }
+
   static forbidden (res, { message = 'Access forbidden: insufficient permissions', details = null } = {}) {
     return ApiResponse.error(res, { message, code: 'FORBIDDEN', details, statusCode: 403 })
   }
