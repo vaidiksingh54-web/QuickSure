@@ -1,8 +1,9 @@
 import axios from 'axios';
+import { STORAGE_KEYS, API_TIMEOUT_MS } from '../config/constants';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
-  timeout: 15000,
+  timeout: API_TIMEOUT_MS,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -11,7 +12,7 @@ const api = axios.create({
 // Request interceptor to attach Bearer JWT if present
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('quicksure_auth_token');
+    const token = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
     config.headers['X-Request-Source'] = 'quicksure-web';
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
