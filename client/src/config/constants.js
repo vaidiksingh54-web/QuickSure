@@ -6,6 +6,7 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: 'quicksure_auth_token',
   CART_ID: 'quicksure_cart_id',
   SAVED_ADDRESS: 'quicksure_saved_address',
+  GUEST_CART: 'quicksure_guest_cart',
 };
 
 export const API_TIMEOUT_MS = 15000;

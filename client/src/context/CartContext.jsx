@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
 import { useAuth } from './AuthContext';
+import { STORAGE_KEYS } from '../config/constants';
 
 const CartContext = createContext(null);
 
-const GUEST_CART_STORAGE_KEY = 'quicksure_guest_cart';
+const GUEST_CART_STORAGE_KEY = STORAGE_KEYS.GUEST_CART;
 
 export function CartProvider({ children }) {
   const { isAuthenticated } = useAuth();
