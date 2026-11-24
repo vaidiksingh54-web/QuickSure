@@ -10,6 +10,10 @@ import orderRoutes from './orderRoutes.js'
 import adminRoutes from './adminRoutes.js'
 import sellerRoutes from './sellerRoutes.js'
 
+/**
+ * QuickSure Central API Router
+ * Aggregates all route modules for /api prefix
+ */
 const apiRouter = Router()
 
 apiRouter.use('/health', healthRoutes)
