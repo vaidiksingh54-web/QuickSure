@@ -10,6 +10,17 @@ export const formatCurrency = (amount) => {
   }).format(amount || 0);
 };
 
+export const formatDateTime = (dateString) => {
+  if (!dateString) return 'N/A';
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(dateString));
+};
+
 export const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
   return new Intl.DateTimeFormat('en-IN', {
