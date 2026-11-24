@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../services/api';
 import { supabase, isMockAuth } from '../config/supabase';
+import { STORAGE_KEYS } from '../config/constants';
 
 const AuthContext = createContext(null);
 
@@ -16,7 +17,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [profile, setProfile] = useState(null);
   const [seller, setSeller] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem('quicksure_auth_token') || null);
+  const [token, setToken] = useState(localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN) || null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -28,7 +29,7 @@ export const AuthProvider = ({ children }) => {
   const initAuth = async () => {
     try {
       setLoading(true);
-      const savedToken = localStorage.getItem('quicksure_auth_token');
+      const savedToken = localStorage.getItem(STORAGE_KEYS.AUTH_TOKEN);
 
       if (savedToken) {
         setToken(savedToken);
@@ -50,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const saveSessionToken = (accessToken) => {
-    localStorage.setItem('quicksure_auth_token', accessToken);
+    localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, accessToken);
     setToken(accessToken);
   };
 
