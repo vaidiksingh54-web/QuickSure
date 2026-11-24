@@ -366,6 +366,166 @@ const mockProducts = [
         display_order: 1
       }
     ]
+  },
+  {
+    id: 'p0000001-0000-0000-0000-000000000009',
+    seller_id: 's0000001-0000-0000-0000-000000000002',
+    category_id: 'c0000002-0000-0000-0000-000000000005',
+    category_slug: 'daily-essentials',
+    category_name: 'Daily Essentials',
+    seller_name: 'QuickMart Daily',
+    title: 'Classmate Pulse 6-Subject Spiral Notebook Copy (300 Pages, Ruled)',
+    slug: 'classmate-pulse-spiral-notebook-copy-300-pages',
+    brand: 'Classmate',
+    description: 'High-quality 70 GSM bright paper spiral notebook copy for daily study, office notes, and college lectures.',
+    specifications: { pages: 300, binding: 'Spiral', paper_gsm: 70 },
+    is_active: true,
+    is_approved: true,
+    rating_avg: 4.8,
+    rating_count: 3420,
+    deleted_at: null,
+    created_at: new Date().toISOString(),
+    variants: [
+      {
+        id: 'v0000001-0000-0000-0000-000000000010',
+        sku: 'CM-NOTE-300',
+        variant_name: 'Single Pack (300 Pages)',
+        price: 180.00,
+        compare_at_price: 220.00,
+        stock_quantity: 120,
+        attributes: { pack: 'Single', ruling: 'Single Line' },
+        is_active: true
+      }
+    ],
+    images: [
+      {
+        id: 'i0000001-0000-0000-0000-000000000010',
+        image_url: 'https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=800&q=80',
+        alt_text: 'Classmate Spiral Notebook Copy',
+        is_primary: true,
+        display_order: 1
+      }
+    ]
+  },
+  {
+    id: 'p0000001-0000-0000-0000-000000000010',
+    seller_id: 's0000001-0000-0000-0000-000000000002',
+    category_id: 'c0000002-0000-0000-0000-000000000005',
+    category_slug: 'daily-essentials',
+    category_name: 'Daily Essentials',
+    seller_name: 'QuickMart Daily',
+    title: 'Tata Sampann Unpolished Toor Dal Daily Grocery Pack (1 kg)',
+    slug: 'tata-sampann-unpolished-toor-dal-1kg',
+    brand: 'Tata Sampann',
+    description: '100% unpolished protein-rich Toor Dal for everyday Indian home cooking.',
+    specifications: { weight: '1 kg', shelf_life: '12 Months', type: 'Unpolished' },
+    is_active: true,
+    is_approved: true,
+    rating_avg: 4.6,
+    rating_count: 5120,
+    deleted_at: null,
+    created_at: new Date().toISOString(),
+    variants: [
+      {
+        id: 'v0000001-0000-0000-0000-000000000011',
+        sku: 'TATA-DAL-1KG',
+        variant_name: '1 kg Pouch',
+        price: 165.00,
+        compare_at_price: 199.00,
+        stock_quantity: 85,
+        attributes: { weight: '1 kg' },
+        is_active: true
+      }
+    ],
+    images: [
+      {
+        id: 'i0000001-0000-0000-0000-000000000011',
+        image_url: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80',
+        alt_text: 'Daily Grocery Toor Dal 1kg',
+        is_primary: true,
+        display_order: 1
+      }
+    ]
+  },
+  {
+    id: 'p0000001-0000-0000-0000-000000000011',
+    seller_id: 's0000001-0000-0000-0000-000000000002',
+    category_id: 'c0000002-0000-0000-0000-000000000005',
+    category_slug: 'daily-essentials',
+    category_name: 'Daily Essentials',
+    seller_name: 'QuickMart Daily',
+    title: 'Dettol Original Liquid Handwash Refill Pouch (750 ml)',
+    slug: 'dettol-liquid-handwash-refill-750ml',
+    brand: 'Dettol',
+    description: 'Trusted daily germ protection liquid handwash refill for home and office use.',
+    specifications: { volume: '750 ml', fragrance: 'Original Pine' },
+    is_active: true,
+    is_approved: true,
+    rating_avg: 4.7,
+    rating_count: 4290,
+    deleted_at: null,
+    created_at: new Date().toISOString(),
+    variants: [
+      {
+        id: 'v0000001-0000-0000-0000-000000000012',
+        sku: 'DET-HW-750',
+        variant_name: '750 ml Refill',
+        price: 119.00,
+        compare_at_price: 145.00,
+        stock_quantity: 150,
+        attributes: { volume: '750 ml' },
+        is_active: true
+      }
+    ],
+    images: [
+      {
+        id: 'i0000001-0000-0000-0000-000000000012',
+        image_url: 'https://images.unsplash.com/photo-1584305574647-0cc949a2bb9f?w=800&q=80',
+        alt_text: 'Dettol Liquid Handwash Refill',
+        is_primary: true,
+        display_order: 1
+      }
+    ]
+  },
+  {
+    id: 'p0000001-0000-0000-0000-000000000012',
+    seller_id: 's0000001-0000-0000-0000-000000000001',
+    category_id: 'c0000002-0000-0000-0000-000000000005',
+    category_slug: 'daily-essentials',
+    category_name: 'Daily Essentials',
+    seller_name: 'ElectroPrime India',
+    title: 'Milton Thermosteel Flip Lid Water Bottle Flask (1000 ml)',
+    slug: 'milton-thermosteel-flask-1000ml',
+    brand: 'Milton',
+    description: 'Double-walled vacuum insulated stainless steel bottle keeps water hot or cold for 24 hours.',
+    specifications: { capacity: '1000 ml', material: '304 Stainless Steel' },
+    is_active: true,
+    is_approved: true,
+    rating_avg: 4.8,
+    rating_count: 6810,
+    deleted_at: null,
+    created_at: new Date().toISOString(),
+    variants: [
+      {
+        id: 'v0000001-0000-0000-0000-000000000013',
+        sku: 'MIL-FLK-1000',
+        variant_name: 'Silver / 1000 ml',
+        price: 799.00,
+        compare_at_price: 1099.00,
+        stock_quantity: 65,
+        attributes: { color: 'Silver', capacity: '1000 ml' },
+        is_active: true
+      }
+    ],
+    images: [
+      {
+        id: 'i0000001-0000-0000-0000-000000000013',
+        image_url: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=800&q=80',
+        alt_text: 'Milton Thermosteel Flask 1000ml',
+        is_primary: true,
+        display_order: 1
+      }
+    ]
   }
 ]
 
