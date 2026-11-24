@@ -38,8 +38,7 @@ router.post(
       mimeType: mime
     })
 
-    return ApiResponse.success(res, {
-      statusCode: 201,
+    return ApiResponse.created(res, {
       message: 'Product image uploaded successfully',
       data: uploaded
     })
