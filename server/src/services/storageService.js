@@ -8,9 +8,9 @@ export const storageService = {
    * Validates MIME type and file size.
    */
   uploadProductImage: async ({ buffer, originalName, mimeType }) => {
-    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp']
+    const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif']
     if (!allowedMimeTypes.includes(mimeType)) {
-      throw new ValidationError(`Unsupported file type '${mimeType}'. Allowed: JPEG, PNG, WEBP.`)
+      throw new ValidationError(`Unsupported file type '${mimeType}'. Allowed: JPEG, PNG, WEBP, AVIF.`)
     }
 
     // In mock/test environment
